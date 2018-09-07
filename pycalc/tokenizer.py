@@ -48,9 +48,9 @@ class Tokenizer:
     def addTokenToResultingDictinary(self, attribute):
         self.resultingList.append((attribute, self.__dict__[attribute]))
 
-    def tokenizeExpression(self, expression: str):
+    def tokenizeExpression(self, string: str):
         attributeNotToCheck = ''
-        for char in expression.replace(' ', ''):
+        for char in string.replace(' ', ''):
             if self.isDigit(char):
                 attributeNotToCheck = 'operand'
                 self.operand += char
