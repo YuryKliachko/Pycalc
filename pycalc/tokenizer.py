@@ -50,14 +50,16 @@ class Tokenizer:
 
     def addTokenToResultingDictinary(self, attributes):
         for attribute in attributes:
-            type = attribute
-            value = self.__dict__[attribute]
-            self.resultingList.append((type, value))
-            self.__dict__[attribute] = ''
+            if attribute is not None:
+                type = attribute
+                value = self.__dict__[attribute]
+                self.resultingList.append((type, value))
+                self.__dict__[attribute] = ''
 
     def tokenizeExpression(self, string: str):
+        assert string != '', 'Expression cannot be empty!'
         attributeNotToCheck = ''
-        for char in string.replace(' ', ''):
+        for char in string.replace(' ', '').lower():
             if self.isDigit(char):
                 attributeNotToCheck = 'operand'
                 self.operand += char
@@ -83,4 +85,5 @@ class Tokenizer:
         return self.resultingList
 
 d = Tokenizer()
-print(d.tokenizeExpression('((test123+test((:))---...-234'))
+print(d.tokenizeExpression('2 (Pi!= .1244.43244'))
+
