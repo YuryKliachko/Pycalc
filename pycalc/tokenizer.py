@@ -1,6 +1,3 @@
-from pycalc.operators import operators, functions
-
-
 class Tokenizer:
     def __init__(self):
         self.resultingList = list()
@@ -45,14 +42,18 @@ class Tokenizer:
     merged.
     '''
     def checkIfAttributeFilled(self, attributeNotToCheck):
+        result = []
         for attribute in self.__dict__:
             if attribute != 'resultingList' and attribute != attributeNotToCheck and len(self.__dict__[attribute]) != 0:
-                return attribute
+                result.append(attribute)
+        return result
 
-    def addTokenToResultingDictinary(self, attribute):
-        type = attribute
-        value = self.__dict__[attribute]
-        self.resultingList.append((type, value))
+    def addTokenToResultingDictinary(self, attributes):
+        for attribute in attributes:
+            type = attribute
+            value = self.__dict__[attribute]
+            self.resultingList.append((type, value))
+            self.__dict__[attribute] = ''
 
     def tokenizeExpression(self, string: str):
         attributeNotToCheck = ''
@@ -67,20 +68,19 @@ class Tokenizer:
                 attributeNotToCheck = 'function'
                 self.function += char
             elif self.isOpenningBracket(char):
-                attributeNotToCheck = 'openingBracket'
-                self.openingBracket += char
+                attributeNotToCheck = None
+                self.openingBracket = char
             elif self.isClosingBracket(char):
-                attributeNotToCheck = 'closingBracket'
-                self.closingBracket += char
+                attributeNotToCheck = None
+                self.closingBracket = char
             else:
                 attributeNotToCheck = 'operator'
                 self.operator += char
             attribute = self.checkIfAttributeFilled(attributeNotToCheck)
             if attribute is not None:
-                self.addTokenToResultingDictinary(attribute=attribute)
-                self.__dict__[attribute] = ''
-        self.addTokenToResultingDictinary(attribute=attributeNotToCheck)
+                self.addTokenToResultingDictinary(attributes=attribute)
+        self.addTokenToResultingDictinary(attributes=[attributeNotToCheck])
         return self.resultingList
 
 d = Tokenizer()
-print(d.tokenizeExpression('test123+test:---...-234'))
+print(d.tokenizeExpression('((test123+test((:))---...-234'))
