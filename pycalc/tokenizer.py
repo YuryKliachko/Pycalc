@@ -36,10 +36,13 @@ class Tokenizer:
             return True
         else:
             return False
-
-    def checkIfAttributeFilled(self):
+    '''
+    Checks what attribute is filled currently except for resulting list and the one where current char in cycle will be
+    merged.
+    '''
+    def checkIfAttributeFilled(self, attributeNotToCheck):
         for attribute in self.__dict__:
-            if attribute != 'resultingList' and len(self.__dict__[attribute]) != 0:
+            if attribute != 'resultingList' and attribute != attributeNotToCheck and len(self.__dict__[attribute]) != 0:
                 return attribute
 
     def addTokenToResultingDictinary(self, attribute):
@@ -48,31 +51,31 @@ class Tokenizer:
     def tokenizeExpression(self, expression: str):
         for char in expression.replace(' ', ''):
             if self.isDigit(char):
-                attribute = self.checkIfAttributeFilled()
+                attribute = self.checkIfAttributeFilled('operand')
                 if attribute is not None:
                     self.addTokenToResultingDictinary(attribute=attribute)
                     self.__dict__[attribute] = ''
                 self.operand += char
             elif self.isDot(char):
-                attribute = self.checkIfAttributeFilled()
+                attribute = self.checkIfAttributeFilled('operand')
                 if attribute is not None:
                     self.addTokenToResultingDictinary(attribute=attribute)
                     self.__dict__[attribute] = ''
                 self.operand += char
             elif self.isAlpha(char):
-                attribute = self.checkIfAttributeFilled()
+                attribute = self.checkIfAttributeFilled('function')
                 if attribute is not None:
                     self.addTokenToResultingDictinary(attribute=attribute)
                     self.__dict__[attribute] = ''
                 self.function += char
             elif self.isOpenningBracket(char):
-                attribute = self.checkIfAttributeFilled()
+                attribute = self.checkIfAttributeFilled('openingBracket')
                 if attribute is not None:
                     self.addTokenToResultingDictinary(attribute=attribute)
                     self.__dict__[attribute] = ''
                 self.openingBracket += char
             elif self.isClosingBracket(char):
-                attribute = self.checkIfAttributeFilled()
+                attribute = self.checkIfAttributeFilled('closingBracket')
                 if attribute is not None:
                     self.addTokenToResultingDictinary(attribute=attribute)
                     self.__dict__[attribute] = ''
