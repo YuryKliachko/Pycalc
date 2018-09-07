@@ -49,38 +49,29 @@ class Tokenizer:
         self.resultingList.append((attribute, self.__dict__[attribute]))
 
     def tokenizeExpression(self, expression: str):
+        attributeNotToCheck = ''
         for char in expression.replace(' ', ''):
             if self.isDigit(char):
-                attribute = self.checkIfAttributeFilled('operand')
-                if attribute is not None:
-                    self.addTokenToResultingDictinary(attribute=attribute)
-                    self.__dict__[attribute] = ''
+                attributeNotToCheck = 'operand'
                 self.operand += char
             elif self.isDot(char):
-                attribute = self.checkIfAttributeFilled('operand')
-                if attribute is not None:
-                    self.addTokenToResultingDictinary(attribute=attribute)
-                    self.__dict__[attribute] = ''
+                attributeNotToCheck = 'operand'
                 self.operand += char
             elif self.isAlpha(char):
-                attribute = self.checkIfAttributeFilled('function')
-                if attribute is not None:
-                    self.addTokenToResultingDictinary(attribute=attribute)
-                    self.__dict__[attribute] = ''
+                attributeNotToCheck = 'function'
                 self.function += char
             elif self.isOpenningBracket(char):
-                attribute = self.checkIfAttributeFilled('openingBracket')
-                if attribute is not None:
-                    self.addTokenToResultingDictinary(attribute=attribute)
-                    self.__dict__[attribute] = ''
+                attributeNotToCheck = 'openingBracket'
                 self.openingBracket += char
             elif self.isClosingBracket(char):
-                attribute = self.checkIfAttributeFilled('closingBracket')
-                if attribute is not None:
-                    self.addTokenToResultingDictinary(attribute=attribute)
-                    self.__dict__[attribute] = ''
+                attributeNotToCheck = 'closingBracket'
                 self.closingBracket += char
+            attribute = self.checkIfAttributeFilled(attributeNotToCheck)
+            if attribute is not None:
+                self.addTokenToResultingDictinary(attribute=attribute)
+                self.__dict__[attribute] = ''
+        self.addTokenToResultingDictinary(attribute=attributeNotToCheck)
         return self.resultingList
 
 d = Tokenizer()
-print(d.tokenizeExpression('2*(2.56+3.14)'))
+print(d.tokenizeExpression('2*(2.56+3.14)sin(30)'))
