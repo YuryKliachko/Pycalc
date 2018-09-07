@@ -1,3 +1,13 @@
-# The main class
+import re
+
 class Calculator:
-    pass
+    def __init__(self):
+        self.operators_dictionary = {'+': self.addition,
+                                     '-': self.subtraction,
+                                     '*': self.multiplication}
+
+    def addition(self):
+        pass
+
+    def subtraction(self):
+        pass

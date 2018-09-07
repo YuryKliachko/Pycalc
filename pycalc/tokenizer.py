@@ -1,3 +1,6 @@
+from pycalc.operators import operators, functions
+
+
 class Tokenizer:
     def __init__(self):
         self.resultingList = list()
@@ -36,6 +39,7 @@ class Tokenizer:
             return True
         else:
             return False
+
     '''
     Checks what attribute is filled currently except for resulting list and the one where current char in cycle will be
     merged.
@@ -46,7 +50,9 @@ class Tokenizer:
                 return attribute
 
     def addTokenToResultingDictinary(self, attribute):
-        self.resultingList.append((attribute, self.__dict__[attribute]))
+        type = attribute
+        value = self.__dict__[attribute]
+        self.resultingList.append((type, value))
 
     def tokenizeExpression(self, string: str):
         attributeNotToCheck = ''
@@ -66,6 +72,9 @@ class Tokenizer:
             elif self.isClosingBracket(char):
                 attributeNotToCheck = 'closingBracket'
                 self.closingBracket += char
+            else:
+                attributeNotToCheck = 'operator'
+                self.operator += char
             attribute = self.checkIfAttributeFilled(attributeNotToCheck)
             if attribute is not None:
                 self.addTokenToResultingDictinary(attribute=attribute)
@@ -74,4 +83,4 @@ class Tokenizer:
         return self.resultingList
 
 d = Tokenizer()
-print(d.tokenizeExpression('2*(2.56+3.14)sin(30)'))
+print(d.tokenizeExpression('test123+test:---...-234'))
