@@ -25,4 +25,4 @@ class Converter:
         return convertedList
 
 conv = Converter()
-print(conv.convertToMath([('operand', '+2'), ('openingBracket', '('), ('function', 'cos'), ('operator', '*'), ('operand', '1244.43244'), ('operator', '+'), ('openingBracket', '('), ('operand', '2'), ('operator', '+'), ('operand', '3'), ('closingBracket', ')'), ('closingBracket', ')')]))
+print(conv.convertToMath([('operand', '-'), ('openingBracket', '('), ('function', 'cos'), ('operator', '*'), ('operand', '1244.43244'), ('operator', '+'), ('openingBracket', '('), ('operand', '2'), ('operator', '+'), ('operand', '3'), ('closingBracket', ')'), ('closingBracket', ')')]))

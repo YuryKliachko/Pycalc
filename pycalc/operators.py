@@ -1,4 +1,5 @@
 from pycalc.calculator import Calculator
+import math
 
 calc = Calculator()
 operators = {
@@ -13,8 +14,7 @@ operators = {
     '>=': lambda x, y: x>=y
 }
 
-functions = {'sin': 1, 'cos': 2}
+functions = {'pow': pow, 'cos': 2}
 
-s = operators['^']
-
-print(s(3, -2))
+s = functions['pow'](2, 2)
+print(s)
