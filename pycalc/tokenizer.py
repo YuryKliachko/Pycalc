@@ -37,6 +37,17 @@ class Tokenizer:
         else:
             return False
 
+    def isMinus(self, char):
+        if char == '-':
+            return True
+        else:
+            return False
+    def isPlus(self, char):
+        if char == '+':
+            return True
+        else:
+            return False
+
     '''
     Checks what attribute is filled currently except for resulting list and the one where current char in cycle will be
     merged.
@@ -75,6 +86,20 @@ class Tokenizer:
             elif self.isClosingBracket(char):
                 attributeNotToCheck = None
                 self.closingBracket = char
+            elif self.isMinus(char):
+                if self.operand == '':
+                    attributeNotToCheck = 'operand'
+                    self.operand += char
+                else:
+                    attributeNotToCheck = 'operator'
+                    self.operator += char
+            elif self.isPlus(char):
+                if self.operand == '':
+                    attributeNotToCheck = 'operand'
+                    self.operand += char
+                else:
+                    attributeNotToCheck = 'operator'
+                    self.operator += char
             else:
                 attributeNotToCheck = 'operator'
                 self.operator += char
