@@ -1,10 +1,20 @@
+from pycalc.calculator import Calculator
+import math
+
+calc = Calculator()
 operators = {
-    '+': 1,
-    '-': 2,
-    '*': 3,
-    '/': 4,
-    '%': 5,
-    '//': 6
+    '+': lambda x=0, y=0: x+y,
+    '-': lambda x=0, y=0: x-y,
+    '*': lambda x, y: x*y,
+    '/': lambda x, y: x/y,
+    '%': lambda x, y: x%y,
+    '//': lambda x, y: x//y,
+    '^': lambda x, y: x**y,
+    '==': lambda x, y: x==y,
+    '>=': lambda x, y: x>=y
 }
 
-functions = {'sin': 1, 'cos': 2}
+functions = {'pow': pow, 'cos': 2}
+
+s = functions['pow'](2, 2)
+print(s)

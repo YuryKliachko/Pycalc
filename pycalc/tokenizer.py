@@ -37,11 +37,22 @@ class Tokenizer:
         else:
             return False
 
+    def isMinus(self, char):
+        if char == '-':
+            return True
+        else:
+            return False
+    def isPlus(self, char):
+        if char == '+':
+            return True
+        else:
+            return False
+
     '''
     Checks what attribute is filled currently except for resulting list and the one where current char in cycle will be
     merged.
     '''
-    def checkIfAttributeFilled(self, attributeNotToCheck):
+    def checkWhichAttributesFilled(self, attributeNotToCheck):
         result = []
         for attribute in self.__dict__:
             if attribute != 'resultingList' and attribute != attributeNotToCheck and len(self.__dict__[attribute]) != 0:
@@ -75,10 +86,27 @@ class Tokenizer:
             elif self.isClosingBracket(char):
                 attributeNotToCheck = None
                 self.closingBracket = char
+            elif self.isMinus(char):
+                if self.operator == '':
+                    attributeNotToCheck = 'operator'
+                    self.operator += char
+                else:
+                    self.addTokenToResultingDictinary(attributes=['operator'])
+                    attributeNotToCheck = 'operator'
+                    self.operator += char
+                    continue
+            elif self.isPlus(char):
+                if self.operator == '':
+                    attributeNotToCheck = 'operator'
+                    self.operator += char
+                else:
+                    self.addTokenToResultingDictinary(attributes=['operator'])
+                    attributeNotToCheck = 'operator'
+                    self.operator += char
             else:
                 attributeNotToCheck = 'operator'
                 self.operator += char
-            attribute = self.checkIfAttributeFilled(attributeNotToCheck)
+            attribute = self.checkWhichAttributesFilled(attributeNotToCheck)
             if attribute is not None:
                 self.addTokenToResultingDictinary(attributes=attribute)
         self.addTokenToResultingDictinary(attributes=[attributeNotToCheck])

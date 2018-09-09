@@ -3,7 +3,7 @@ class Converter:
         convertedList = []
         for item in tokenizedList:
             if item[0] == 'operand':
-                if '.' in item[1] and item[1].find('.') != 0:
+                if '.' in item[1] and not item[1].startswith('.') and not item[1].endswith('.'):
                     convertedList.append((item[0], float(item[1])))
                 elif '.' not in item[1]:
                     convertedList.append((item[0], int(item[1])))
@@ -11,12 +11,12 @@ class Converter:
                     return f'Typo in the operand {item[1]}!'
             elif item[0] is 'operator':
                 if item[1] in operators.keys():
-                    convertedList.append((item[0], operators[item[1]]))
+                    convertedList.append((item[0], item[1]))
                 else:
                     return f'Unsuported operator {item[1]}'
             elif item[0] == 'function':
                 if item[1] in functions.keys():
-                    convertedList.append((item[0], functions[item[1]]))
+                    convertedList.append((item[0], item[1]))
                 else:
                     return f'Unsuported function {item[1]}'
             else:
@@ -25,4 +25,4 @@ class Converter:
         return convertedList
 
 conv = Converter()
-print(conv.convertToMath([('operand', '2'), ('openingBracket', '('), ('function', 'cos'), ('operator', '*'), ('operand', '1244.43244'), ('operator', '+'), ('openingBracket', '('), ('operand', '2'), ('operator', '+'), ('operand', '3'), ('closingBracket', ')'), ('closingBracket', ')')]))
+print(conv.convertToMath([('operand', '-'), ('openingBracket', '('), ('function', 'cos'), ('operator', '*'), ('operand', '1244.43244'), ('operator', '+'), ('openingBracket', '('), ('operand', '2'), ('operator', '+'), ('operand', '3'), ('closingBracket', ')'), ('closingBracket', ')')]))
