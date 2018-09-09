@@ -103,6 +103,7 @@ class Tokenizer:
                     self.addTokenToResultingDictinary(attributes=['operator'])
                     attributeNotToCheck = 'operator'
                     self.operator += char
+                    continue
             else:
                 attributeNotToCheck = 'operator'
                 self.operator += char
