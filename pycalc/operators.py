@@ -1,4 +1,3 @@
-from pycalc.calculator import Calculator
 import math
 
 operators = {
