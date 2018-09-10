@@ -64,7 +64,7 @@ class Tokenizer:
             if attribute is not None:
                 type = attribute
                 value = self.__dict__[attribute]
-                self.resultingList.append((type, value))
+                self.resultingList.append({'type': type, 'value': value})
                 self.__dict__[attribute] = ''
 
     def tokenizeExpression(self, string: str):
