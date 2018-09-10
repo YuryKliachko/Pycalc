@@ -1,6 +1,8 @@
 class Converter:
     def __init__(self):
         self.convertedList = []
+        self.operatorManager = OperatorsManager()
+        self.functionsManager = FunctionsManager()
     
     def validateOperand(self, operand: str):
         if '.' in operand and operand.count('.') == 1 and not operand.startswith('.') and not operand.endswith('.'):
@@ -11,15 +13,17 @@ class Converter:
             return Error(id=1, arg=operand)
 
     def validateOperator(self, operator: str):
-        if operator in operators.keys():
-            priority = operators[operator]['priority']
-            self.convertedList.append({'type': 'operator', 'value': operator, 'priority': priority})
+        if self.operatorManager.isValidOperator(operator):
+            function = self.operatorManager.fetchOperatorsFunction(operator)
+            priority = self.operatorManager.fetchOperatorsPriority(operator)
+            self.convertedList.append({'type': 'operator', 'value': function, 'priority': priority})
         else:
             return Error(id=2, arg=operator)
 
     def validateFunction(self, function: str):
-        if function in functions.keys():
-            self.convertedList.append({'type': 'function', 'value': function})
+        if self.functionsManager.isValidFunction(function):
+            value = self.functionsManager.fetchFunctionValue(function)
+            self.convertedList.append({'type': 'function', 'value': value})
         else:
             return Error(id=3, arg=function)
 
@@ -44,7 +48,7 @@ class Converter:
 
 conv = Converter()
 print(conv.convertToMath([{'type': 'operator', 'value': '-'},
-                          {'type': 'function', 'value': 'po'},
+                          {'type': 'function', 'value': 'pow'},
                           {'type': 'openingBracket', 'value': '('},
                           {'type': 'operand', 'value': '3.4'},
                           {'type': 'operator', 'value': '+'},
