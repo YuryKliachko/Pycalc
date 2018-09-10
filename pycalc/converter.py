@@ -2,27 +2,37 @@ class Converter:
     def convertToMath(self, tokenizedList):
         convertedList = []
         for item in tokenizedList:
-            if item[0] == 'operand':
-                if '.' in item[1] and not item[1].startswith('.') and not item[1].endswith('.'):
-                    convertedList.append((item[0], float(item[1])))
-                elif '.' not in item[1]:
-                    convertedList.append((item[0], int(item[1])))
+            if item['type'] == 'operand':
+                if '.' in item['value'] and not item['value'].startswith('.') and not item['value'].endswith('.'):
+                    convertedList.append({'type': item['type'], 'value': float(item['value'])})
+                elif '.' not in item['value']:
+                    convertedList.append({'type': item['type'], 'value': int(item['value'])})
                 else:
-                    return f'Typo in the operand {item[1]}!'
-            elif item[0] is 'operator':
-                if item[1] in operators.keys():
-                    convertedList.append((item[0], item[1]))
+                    return 'Typo in the operand {}!'.format(item['value'])
+            elif item['type'] is 'operator':
+                if item['value'] in operators.keys():
+                    priority = operators[item['value']]['priority']
+                    convertedList.append({'type': item['type'], 'value': item['value'], 'priority': priority})
                 else:
-                    return f'Unsuported operator {item[1]}'
-            elif item[0] == 'function':
-                if item[1] in functions.keys():
-                    convertedList.append((item[0], item[1]))
+                    return 'Unsuported operator {}'.format(item['value'])
+            elif item['type'] == 'function':
+                if item['value'] in functions.keys():
+                    convertedList.append({'type': item['type'], 'value': item['value']})
                 else:
-                    return f'Unsuported function {item[1]}'
+                    return 'Unsuported function {}'.format(item['value'])
             else:
                 convertedList.append(item)
 
         return convertedList
 
 conv = Converter()
-print(conv.convertToMath([('operand', '-'), ('openingBracket', '('), ('function', 'cos'), ('operator', '*'), ('operand', '1244.43244'), ('operator', '+'), ('openingBracket', '('), ('operand', '2'), ('operator', '+'), ('operand', '3'), ('closingBracket', ')'), ('closingBracket', ')')]))
+print(conv.convertToMath([{'type': 'operator', 'value': '-'},
+                          {'type': 'function', 'value': 'pow'},
+                          {'type': 'openingBracket', 'value': '('},
+                          {'type': 'operand', 'value': '0.34'},
+                          {'type': 'operator', 'value': '+'},
+                          {'type': 'operator', 'value': '+'},
+                          {'type': 'operator', 'value': '-'},
+                          {'type': 'operator', 'value': '-'},
+                          {'type': 'operand', 'value': '5'},
+                          {'type': 'closingBracket', 'value': ')'}]))
