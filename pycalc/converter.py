@@ -83,6 +83,6 @@ for i in conv.convertToMath([{'type': 'operator', 'value': '-'},
                           {'type': 'operator', 'value': '-'},
                           {'type': 'operand', 'value': '5'},
                           {'type': 'closingBracket', 'value': ')'}]):
-    print(i)
 '''
+
 

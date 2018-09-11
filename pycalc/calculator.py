@@ -1,23 +1,21 @@
+from pycalc.tokenizer import Tokenizer
+from pycalc.converter import Converter
+from pycalc.error import Error
+
+
 class Calculator:
-    def __init__(self, expression: list):
+    def __init__(self, expression):
         self.expression = expression
+        self.tokenizer = Tokenizer()
+        self.converter = Converter()
 
-    def calculteResult(self, expression):
-        pass
+    def calculteResult(self):
+        tokenized = self.tokenizer.tokenizeExpression(self.expression)
+        converted = self.converter.convertToMath(tokenized)
+        print(converted)
 
 
 
-cal = Calculator(expression=[('operand', 3),
-                             ['openingBracket', '('],
-                             ('function', 'cos'),
-                             ('operator', '*', 3),
-                             ('operand', 1244.43244),
-                             ('operator', '+', 4),
-                             ['openingBracket', '('],
-                             ('operand', 2),
-                             ('operator', '+', 4),
-                             ('operand', 3),
-                             ['closingBracket', ')'],
-                             ['closingBracket', ')']])
+cal = Calculator(expression='sin(2, 3)')
 
-#print(cal.calculteResult(expression=cal.expression))
+print(cal.calculteResult())

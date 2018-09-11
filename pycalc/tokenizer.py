@@ -123,6 +123,6 @@ class Tokenizer:
         return self.resultingList
 
 
-d = Tokenizer()
-print(d.tokenizeExpression('2 (Pi!= .1244.43244'))
+# = Tokenizer()
+#print(d.tokenizeExpression('2 (Pi!= .1244.43244'))
 
