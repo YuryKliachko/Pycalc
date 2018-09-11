@@ -10,7 +10,7 @@ class Converter:
         self.levelOfEnclosing = 0
     
     def validateOperand(self, operand: str):
-        if '.' in operand and operand.count('.') == 1 and not operand.startswith('.') and not operand.endswith('.'):
+        if '.' in operand and operand.count('.') == 1:
             self.convertedList.append({'type': 'operand', 'value': float(operand)})
         elif '.' not in operand:
             self.convertedList.append({'type': 'operand', 'value': int(operand)})
@@ -21,7 +21,7 @@ class Converter:
         if self.operatorManager.isValidOperator(operator):
             function = self.operatorManager.fetchOperatorsFunction(operator)
             priority = self.operatorManager.fetchOperatorsPriority(operator)
-            self.convertedList.append({'type': 'operator', 'value': function, 'priority': priority})
+            self.convertedList.append({'type': 'operator', 'value': operator, 'priority': priority})
         else:
             return Error(id=2, arg=operator)
 
