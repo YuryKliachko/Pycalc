@@ -48,6 +48,12 @@ class Tokenizer:
         else:
             return False
 
+    def isComa(self, char):
+        if char == ',':
+            return True
+        else:
+            return False
+
     '''
     Checks what attribute is filled currently except for resulting list and the one where current char in cycle will be
     merged.
@@ -68,15 +74,18 @@ class Tokenizer:
                 self.__dict__[attribute] = ''
 
     def tokenizeExpression(self, string: str):
+        string = string.replace(' ', '').lower()
         assert string != '', 'Expression cannot be empty!'
         attributeNotToCheck = ''
-        for char in string.replace(' ', '').lower():
+        for char in string:
             if self.isDigit(char):
                 attributeNotToCheck = 'operand'
                 self.operand += char
             elif self.isDot(char):
                 attributeNotToCheck = 'operand'
                 self.operand += char
+            elif self.isComa(char):
+                attributeNotToCheck = None
             elif self.isAlpha(char):
                 attributeNotToCheck = 'function'
                 self.function += char
