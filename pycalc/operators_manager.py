@@ -3,6 +3,8 @@
 class OperatorsManager:
     def __init__(self):
         self.operatorsDict = {
+            '(': {'function': None, 'priority': 10},
+            ')': {'function': None, 'priority': 10},
             '+': {'function': lambda x=0, y=0: x+y, 'priority': 4},
             '-': {'function': lambda x=0, y=0: x-y, 'priority': 4},
             '*': {'function': lambda x, y: x*y, 'priority': 3},
