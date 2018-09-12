@@ -49,40 +49,40 @@ class Converter:
             if item['type'] == 'operand':
                 operand = self.validateOperand(item['value'])
                 if isinstance(operand, Error):
-                    return operand.raiseError()
+                    return operand
             elif item['type'] is 'operator':
                 operator = self.validateOperator(item['value'])
                 if isinstance(operator, Error):
-                    return operator.raiseError()
+                    return operator
             elif item['type'] == 'function':
                 function = self.validateFunction(item['value'])
                 if isinstance(function, Error):
-                    return function.raiseError()
+                    return function
             elif item['type'] == 'openingBracket' or item['type'] == 'closingBracket':
                 bracket = self.validateBracket(item['value'])
                 if isinstance(bracket, Error):
-                    return bracket.raiseError()
+                    return bracket
             else:
                 convertedList.append(item)
         if self.levelOfEnclosing > 0:
-            return Error(id=5, arg=')').raiseError()
+            return Error(id=5, arg=')')
         else:
             return self.convertedList
 
 '''
-conv = Converter()
-for i in conv.convertToMath([{'type': 'operator', 'value': '-'},
+#conv = Converter()
+#for i in conv.convertToMath([{'type': 'operator', 'value': '-'},
                           {'type': 'function', 'value': 'pow'},
                           {'type': 'openingBracket', 'value': '('},
                           {'type': 'openingBracket', 'value': '('},
-                          {'type': 'operand', 'value': '3.4'},
+                          {'type': 'operand', 'value': '.34'},
                           {'type': 'operator', 'value': '+'},
                           {'type': 'operator', 'value': '+'},
                           {'type': 'closingBracket', 'value': ')'},
                           {'type': 'operator', 'value': '-'},
                           {'type': 'operator', 'value': '-'},
-                          {'type': 'operand', 'value': '5'},
+                          {'type': 'operand', 'value': '5.'},
                           {'type': 'closingBracket', 'value': ')'}]):
+
+print(i)
 '''
-
-

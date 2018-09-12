@@ -62,6 +62,12 @@ class Calculator:
         except IndexError:
             return None
 
+    def isReturnedAsError(self, item):
+        if isinstance(item, Error):
+            return True
+        else:
+            return False
+
     def calculateOnStack(self):
         operator = self.getOperatorFromStack()
         operatorsFunction = self.operatorsManager.operatorsDict[operator]['function']
@@ -109,6 +115,8 @@ class Calculator:
                         self.previousItem = item['type']
                     else:
                         currentResult = self.calculateOnStack()
+                        if self.isReturnedAsError(currentResult):
+                            return currentResult.raiseError()
                         self.putOperandOnStack(currentResult)
                         self.removeOperatorFromStack()
                         self.putOperatorOnStack(item)
@@ -122,6 +130,8 @@ class Calculator:
             return self.calculateOnStack()
         for oprator in range(len(self.operatorStack)):
             currentResult = self.calculateOnStack()
+            if self.isReturnedAsError(currentResult):
+                return currentResult.raiseError()
             self.putOperandOnStack(currentResult)
             self.removeOperatorFromStack()
         return self.getLastOperand()
@@ -129,6 +139,8 @@ class Calculator:
 
 
 
-cal = Calculator(expression='2.5*3 - 2.5')
-cal.prepareExpression()
+cal = Calculator(expression='2.5//*2.5+3')
+prepared = cal.prepareExpression()
+if cal.isReturnedAsError(prepared):
+    print(prepared.raiseError())
 print(cal.calculteResult())
