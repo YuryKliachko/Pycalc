@@ -32,10 +32,15 @@ class Calculator:
         self.operandStack.append(operand)
 
     def getLastOperand(self):
-        return self.operandStack[len(self.operandStack)-1]['value']
+        return self.operandStack[len(self.operandStack)-1]
 
-    def removeOperandFromStack(self):
+    def removeLastOperandFromStack(self):
         return self.operandStack.pop()
+
+    def removePreLastOperandFromStack(self):
+        preLast = self.operandStack[len(self.operandStack)-2]
+        del self.operandStack[self.operandStack.index(preLast)]
+        return preLast
 
     def putOperatorOnStack(self, operator):
         self.operatorStack.append(operator)
@@ -47,8 +52,7 @@ class Calculator:
         self.operatorStack.pop()
 
     def getOperatorPriority(self, operator):
-        operatorOnStack = self.getOperatorFromStack()
-        priority = self.operatorsManager.fetchOperatorsPriority(operatorOnStack)
+        priority = self.operatorsManager.fetchOperatorsPriority(operator)
         return priority
 
     def getNextItem(self, currentItemIndex):
@@ -60,14 +64,14 @@ class Calculator:
 
     def calculateOnStack(self):
         operator = self.getOperatorFromStack()
-        operatorsFunction = self.operatorsManager.operatorsDict[operator]
+        operatorsFunction = self.operatorsManager.operatorsDict[operator]['function']
         if operator in ('-', '+'):
             if self.previousItem == 'operand':
-                firstOperand = self.removeOperandFromStack()
+                firstOperand = self.removePreLastOperandFromStack()
             elif self.previousItem == '' or self.previousItem != 'operand':
                 firstOperand = 0
             if self.nextItem == 'operand':
-                secondOperand = self.removeOperandFromStack()
+                secondOperand = self.removeLastOperandFromStack()
             elif self.nextItem not in ('+', '-') or self.nextItem is None:
                 return Error(id=6, arg=operator)
             else:
@@ -75,8 +79,8 @@ class Calculator:
             return operatorsFunction(firstOperand, secondOperand)
         else:
             if self.previousItem == 'operand' and self.nextItem == 'operand':
-                firstOperand = self.removeOperandFromStack()
-                secondOperand = self.removeOperandFromStack()
+                firstOperand = self.removePreLastOperandFromStack()
+                secondOperand = self.removeLastOperandFromStack()
                 return operatorsFunction(firstOperand, secondOperand)
             else:
                 return Error(id=6, arg=operator)
@@ -93,29 +97,38 @@ class Calculator:
         for item in self.prepared:
             if item['type'] == 'operand':
                 self.putOperandOnStack(item['value'])
+                self.previousItem = item['type']
             elif item['type'] == 'operator':
+                self.nextItem = self.getNextItem(currentItemIndex=self.prepared.index(item))
                 if self.isOperatorStackEmpty():
                     self.putOperatorOnStack(item)
+                    self.previousItem = item['type']
                 else:
-                    if self.getOperatorPriority(item['value']) > self.getOperatorPriority(self.getOperatorFromStack()):
+                    if self.getOperatorPriority(item['value']) < self.getOperatorPriority(self.getOperatorFromStack()):
                         self.putOperatorOnStack(item)
+                        self.previousItem = item['type']
                     else:
                         currentResult = self.calculateOnStack()
                         self.putOperandOnStack(currentResult)
                         self.removeOperatorFromStack()
+                        self.putOperatorOnStack(item)
+                        self.previousItem = item['type']
             elif item['type'] in ('openingBracket', 'closingbracket'):
                 self.putOperatorOnStack(item['value'])
-
-            self.previousItem = item['type']
-            self.nextItem = self.getNextItem(currentItemIndex=self.prepared.index(item))
+                self.previousItem = item['type']
         if self.isOperatorStackEmpty():
             return self.getLastOperand()
         elif len(self.operatorStack) == 1:
-            return self.calculateOnStack().raiseError()
+            return self.calculateOnStack()
+        for oprator in range(len(self.operatorStack)):
+            currentResult = self.calculateOnStack()
+            self.putOperandOnStack(currentResult)
+            self.removeOperatorFromStack()
+        return self.getLastOperand()
 
 
 
 
-cal = Calculator(expression='2+2')
+cal = Calculator(expression='2.5*3 - 2.5')
 cal.prepareExpression()
 print(cal.calculteResult())
