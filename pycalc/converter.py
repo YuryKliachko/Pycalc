@@ -34,12 +34,12 @@ class Converter:
 
     def validateBracket(self, bracket):
         if bracket == '(':
-            self.convertedList.append({'type': 'openingBracket', 'level': self.levelOfEnclosing})
+            self.convertedList.append({'type': 'openingBracket', 'value': '(', 'level': self.levelOfEnclosing})
             self.levelOfEnclosing += 1
         elif bracket == ')':
             if self.levelOfEnclosing > 0:
                 self.levelOfEnclosing -= 1
-                self.convertedList.append({'type': 'closingBracket', 'level': self.levelOfEnclosing})
+                self.convertedList.append({'type': 'closingBracket', 'value': ')', 'level': self.levelOfEnclosing})
             else:
                 return Error(id=4, arg='(')
 

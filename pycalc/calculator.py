@@ -121,14 +121,14 @@ class Calculator:
                         self.removeOperatorFromStack()
                         self.putOperatorOnStack(item)
                         self.previousItem = item['type']
-            elif item['type'] in ('openingBracket', 'closingbracket'):
-                self.putOperatorOnStack(item['value'])
+            elif item['type'] in ('openingBracket', 'closingBracket'):
+                self.putOperatorOnStack(item)
                 self.previousItem = item['type']
         if self.isOperatorStackEmpty():
             return self.getLastOperand()
         elif len(self.operatorStack) == 1:
             return self.calculateOnStack()
-        for oprator in range(len(self.operatorStack)):
+        for operator in range(len(self.operatorStack)):
             currentResult = self.calculateOnStack()
             if self.isReturnedAsError(currentResult):
                 return currentResult.raiseError()
@@ -139,7 +139,7 @@ class Calculator:
 
 
 
-cal = Calculator(expression='2.5//*2.5+3')
+cal = Calculator(expression='(2+2)*3')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
