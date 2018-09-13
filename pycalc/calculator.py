@@ -7,6 +7,7 @@ from pycalc.operators_manager import OperatorsManager
 class Calculator:
     def __init__(self, expression):
         self.expression = expression
+        self.itemCounter = 0
         self.tokenizer = Tokenizer()
         self.converter = Converter()
         self.operatorsManager = OperatorsManager()
@@ -79,18 +80,21 @@ class Calculator:
             if self.nextItem == 'operand':
                 secondOperand = self.removeLastOperandFromStack()
             elif self.nextItem not in ('+', '-') or self.nextItem is None:
-                return Error(id=6, arg=operator)
+                currentResult = Error(id=6, arg=operator)
             else:
                 secondOperand = 0
-            return operatorsFunction(firstOperand, secondOperand)
+            currentResult = operatorsFunction(firstOperand, secondOperand)
         else:
             if self.previousItem == 'operand' and self.nextItem == 'operand':
                 firstOperand = self.removePreLastOperandFromStack()
                 secondOperand = self.removeLastOperandFromStack()
-                return operatorsFunction(firstOperand, secondOperand)
+                currentResult = operatorsFunction(firstOperand, secondOperand)
             else:
-                return Error(id=6, arg=operator)
-
+                currentResult = Error(id=6, arg=operator)
+        if self.isReturnedAsError(currentResult) is False:
+            self.putOperandOnStack(currentResult)
+            self.removeOperatorFromStack()
+        return currentResult
 
     def prepareExpression(self):
         tokenized = self.tokenizer.tokenizeExpression(self.expression)
@@ -101,45 +105,48 @@ class Calculator:
 
     def calculteResult(self):
         for item in self.prepared:
+            self.itemCounter += 1
             if item['type'] == 'operand':
                 self.putOperandOnStack(item['value'])
-                self.previousItem = item['type']
             elif item['type'] == 'operator':
-                self.nextItem = self.getNextItem(currentItemIndex=self.prepared.index(item))
+                currentIndex = self.prepared.index(item, self.itemCounter-1, len(self.expression))
+                self.nextItem = self.getNextItem(currentItemIndex=currentIndex)
                 if self.isOperatorStackEmpty():
                     self.putOperatorOnStack(item)
-                    self.previousItem = item['type']
                 else:
                     if self.getOperatorPriority(item['value']) < self.getOperatorPriority(self.getOperatorFromStack()):
                         self.putOperatorOnStack(item)
-                        self.previousItem = item['type']
                     else:
                         currentResult = self.calculateOnStack()
                         if self.isReturnedAsError(currentResult):
                             return currentResult.raiseError()
-                        self.putOperandOnStack(currentResult)
-                        self.removeOperatorFromStack()
                         self.putOperatorOnStack(item)
-                        self.previousItem = item['type']
-            elif item['type'] in ('openingBracket', 'closingBracket'):
+            elif item['type'] in ('openingBracket'):
                 self.putOperatorOnStack(item)
+            else:
+                for i in range(len(self.operatorStack)):
+                    currentResult = self.calculateOnStack()
+                    if self.isReturnedAsError(currentResult):
+                        return currentResult.raiseError()
+                    if self.getOperatorFromStack() == '(':
+                        self.removeOperatorFromStack()
+                        break
+            if item['type'] != 'closingBracket':
                 self.previousItem = item['type']
         if self.isOperatorStackEmpty():
             return self.getLastOperand()
         elif len(self.operatorStack) == 1:
             return self.calculateOnStack()
-        for operator in range(len(self.operatorStack)):
+        for i in range(len(self.operatorStack)):
             currentResult = self.calculateOnStack()
             if self.isReturnedAsError(currentResult):
                 return currentResult.raiseError()
-            self.putOperandOnStack(currentResult)
-            self.removeOperatorFromStack()
         return self.getLastOperand()
 
 
 
 
-cal = Calculator(expression='(2+2)*3')
+cal = Calculator(expression='((2+2)-(3-4)) == 5')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
