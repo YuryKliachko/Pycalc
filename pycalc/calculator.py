@@ -7,7 +7,6 @@ from pycalc.operators_manager import OperatorsManager
 class Calculator:
     def __init__(self, expression):
         self.expression = expression
-        self.itemCounter = 0
         self.tokenizer = Tokenizer()
         self.converter = Converter()
         self.operatorsManager = OperatorsManager()
@@ -70,20 +69,6 @@ class Calculator:
         priority = self.operatorsManager.fetchOperatorsPriority(operator)
         return priority
 
-    def getNextItem(self, currentItemIndex):
-        try:
-            nextItem = self.prepared[currentItemIndex+1]
-            return nextItem
-        except IndexError:
-            return None
-
-    def getPreviousitem(self, currentItemIndex):
-        try:
-            previousItem = self.prepared[currentItemIndex-1]
-            return previousItem
-        except:
-            return None
-
     def isReturnedAsError(self, item):
         if isinstance(item, Error):
             return True
@@ -120,7 +105,6 @@ class Calculator:
 
     def calculteResult(self):
         for item in self.prepared:
-            self.itemCounter += 1
             if item['type'] == 'operand':
                 self.putOperandOnStack(item['value'])
             elif item['type'] == 'operator':
@@ -157,7 +141,7 @@ class Calculator:
         return self.getLastOperand()
 
 
-cal = Calculator(expression='-')
+cal = Calculator(expression='(---2+2+)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
