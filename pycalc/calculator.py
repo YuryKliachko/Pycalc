@@ -73,9 +73,9 @@ class Calculator:
         operator = self.getOperatorFromStack()
         operatorsFunction = self.operatorsManager.operatorsDict[operator]['function']
         if operator in ('-', '+'):
-            if self.previousItem == 'operand':
+            if self.previousItem['type'] == 'operand':
                 firstOperand = self.removePreLastOperandFromStack()
-            elif self.previousItem == '' or self.previousItem != 'operand':
+            elif self.previousItem['type'] == '' or self.previousItem['type'] != 'operand':
                 firstOperand = 0
             if self.nextItem['type'] == 'operand':
                 secondOperand = self.removeLastOperandFromStack()
@@ -85,7 +85,7 @@ class Calculator:
                 secondOperand = 0
             currentResult = operatorsFunction(firstOperand, secondOperand)
         else:
-            if self.previousItem == 'operand' and self.nextItem == 'operand':
+            if self.previousItem['type'] == 'operand' and self.nextItem['type'] == 'operand':
                 firstOperand = self.removePreLastOperandFromStack()
                 secondOperand = self.removeLastOperandFromStack()
                 currentResult = operatorsFunction(firstOperand, secondOperand)
@@ -132,7 +132,7 @@ class Calculator:
                         self.removeOperatorFromStack()
                         break
             if item['type'] != 'closingBracket':
-                self.previousItem = item['type']
+                self.previousItem = item
         if self.isOperatorStackEmpty():
             return self.getLastOperand()
         elif len(self.operatorStack) == 1:
@@ -146,7 +146,7 @@ class Calculator:
 
 
 
-cal = Calculator(expression='2--2')
+cal = Calculator(expression='(2-3)*(3--3)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
