@@ -14,8 +14,7 @@ class Calculator:
         self.prepared = []
         self.operandStack = []
         self.operatorStack = []
-        self.previousItem = str()
-        self.nextItem = str()
+        self.wasChangedLast = ''
 
     def isOperandStackEmpty(self):
         if len(self.operandStack) == 0:
@@ -31,6 +30,7 @@ class Calculator:
 
     def putOperandOnStack(self, operand):
         self.operandStack.append(operand)
+        self.wasChangedLast = 'operandStack'
 
     def getLastOperand(self):
         return self.operandStack[len(self.operandStack)-1]
@@ -45,7 +45,12 @@ class Calculator:
     def removePreLastOperandFromStack(self):
         length = len(self.operandStack)
         if length == 1:
-            preLast = self.operandStack[0]
+            if self.wasChangedLast == 'operatorStack':
+                preLast = self.operandStack[0]
+            else:
+                return None
+        elif length == 0:
+            return None
         else:
             preLast = self.operandStack[length-2]
         del self.operandStack[self.operandStack.index(preLast)]
@@ -53,6 +58,7 @@ class Calculator:
 
     def putOperatorOnStack(self, operator):
         self.operatorStack.append(operator)
+        self.wasChangedLast = 'operatorStack'
 
     def getOperatorFromStack(self):
         return self.operatorStack[len(self.operatorStack)-1]
@@ -87,13 +93,17 @@ class Calculator:
     def calculateOnStack(self):
         operator = self.getOperatorFromStack()
         operatorsFunction = self.operatorsManager.operatorsDict[operator['value']]['function']
-        if operator['value'] in ('+', '-'):
-            firstOperand = self.removePreLastOperandFromStack()
-            secondOperand = self.removeLastOperandFromStack()
+        if operator['value'] == '(':
+            return self.getLastOperand()
         else:
             firstOperand = self.removePreLastOperandFromStack()
             secondOperand = self.removeLastOperandFromStack()
-            if secondOperand is None:
+            if operator['value'] in ('+', '-'):
+                if firstOperand == None:
+                    firstOperand = 0
+                if secondOperand == None:
+                    return Error(id=6, arg=operator['value'])
+            else:
                 return Error(id=6, arg=operator['value'])
         currentResult = operatorsFunction(firstOperand, secondOperand)
         if self.isReturnedAsError(currentResult) is False:
@@ -147,9 +157,7 @@ class Calculator:
         return self.getLastOperand()
 
 
-
-
-cal = Calculator(expression='(3^2)%2')
+cal = Calculator(expression='(-)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
