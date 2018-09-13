@@ -8,12 +8,13 @@ class Converter:
         self.operatorManager = OperatorsManager()
         self.functionsManager = FunctionsManager()
         self.levelOfEnclosing = 0
+        self.itemIndex = -1
     
     def validateOperand(self, operand: str):
         if '.' in operand and operand.count('.') == 1:
-            self.convertedList.append({'type': 'operand', 'value': float(operand)})
+            self.convertedList.append({'type': 'operand', 'value': float(operand), 'index': self.itemIndex})
         elif '.' not in operand:
-            self.convertedList.append({'type': 'operand', 'value': int(operand)})
+            self.convertedList.append({'type': 'operand', 'value': int(operand), 'index': self.itemIndex})
         else:
             return Error(id=1, arg=operand)
 
@@ -21,31 +22,32 @@ class Converter:
         if self.operatorManager.isValidOperator(operator):
             function = self.operatorManager.fetchOperatorsFunction(operator)
             priority = self.operatorManager.fetchOperatorsPriority(operator)
-            self.convertedList.append({'type': 'operator', 'value': operator, 'priority': priority})
+            self.convertedList.append({'type': 'operator', 'value': operator, 'priority': priority, 'index': self.itemIndex})
         else:
             return Error(id=2, arg=operator)
 
     def validateFunction(self, function: str):
         if self.functionsManager.isValidFunction(function):
             value = self.functionsManager.fetchFunctionValue(function)
-            self.convertedList.append({'type': 'function', 'value': value})
+            self.convertedList.append({'type': 'function', 'value': value, 'index': self.itemIndex})
         else:
             return Error(id=3, arg=function)
 
     def validateBracket(self, bracket):
         if bracket == '(':
-            self.convertedList.append({'type': 'openingBracket', 'value': '(', 'level': self.levelOfEnclosing})
+            self.convertedList.append({'type': 'openingBracket', 'value': '(', 'index': self.itemIndex})
             self.levelOfEnclosing += 1
         elif bracket == ')':
             if self.levelOfEnclosing > 0:
                 self.levelOfEnclosing -= 1
-                self.convertedList.append({'type': 'closingBracket', 'value': ')', 'level': self.levelOfEnclosing})
+                self.convertedList.append({'type': 'closingBracket', 'value': ')', 'index': self.itemIndex})
             else:
                 return Error(id=4, arg='(')
 
     def convertToMath(self, tokenizedList):
         convertedList = []
         for item in tokenizedList:
+            self.itemIndex += 1
             if item['type'] == 'operand':
                 operand = self.validateOperand(item['value'])
                 if isinstance(operand, Error):
