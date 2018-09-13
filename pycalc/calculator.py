@@ -58,7 +58,7 @@ class Calculator:
 
     def getNextItem(self, currentItemIndex):
         try:
-            nextItem = self.prepared[currentItemIndex+1]['type']
+            nextItem = self.prepared[currentItemIndex+1]
             return nextItem
         except IndexError:
             return None
@@ -77,9 +77,9 @@ class Calculator:
                 firstOperand = self.removePreLastOperandFromStack()
             elif self.previousItem == '' or self.previousItem != 'operand':
                 firstOperand = 0
-            if self.nextItem == 'operand':
+            if self.nextItem['type'] == 'operand':
                 secondOperand = self.removeLastOperandFromStack()
-            elif self.nextItem not in ('+', '-') or self.nextItem is None:
+            elif self.nextItem['value'] not in ('+', '-') or self.nextItem is None:
                 currentResult = Error(id=6, arg=operator)
             else:
                 secondOperand = 0
@@ -146,7 +146,7 @@ class Calculator:
 
 
 
-cal = Calculator(expression='((2+2)-(3-4)) == 5')
+cal = Calculator(expression='2--2')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
