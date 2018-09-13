@@ -157,7 +157,7 @@ class Calculator:
         return self.getLastOperand()
 
 
-cal = Calculator(expression='(-)')
+cal = Calculator(expression='-')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())

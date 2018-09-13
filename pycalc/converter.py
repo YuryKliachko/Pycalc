@@ -20,7 +20,6 @@ class Converter:
 
     def validateOperator(self, operator: str):
         if self.operatorManager.isValidOperator(operator):
-            function = self.operatorManager.fetchOperatorsFunction(operator)
             priority = self.operatorManager.fetchOperatorsPriority(operator)
             self.convertedList.append({'type': 'operator', 'value': operator, 'priority': priority, 'index': self.itemIndex})
         else:
