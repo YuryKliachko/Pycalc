@@ -96,23 +96,18 @@ class Tokenizer:
                 attributeNotToCheck = None
                 self.closingBracket = char
             elif self.isMinus(char):
-                if self.operator == '':
-                    attributeNotToCheck = 'operator'
+                attributeNotToCheck = 'operator'
+                if len(self.operator) == 0:
                     self.operator += char
                 else:
-                    self.addTokenToResultingDictinary(attributes=['operator'])
-                    attributeNotToCheck = 'operator'
-                    self.operator += char
-                    continue
+                    if self.isMinus(self.operator[-1]):
+                        self.operator = self.operator.replace(self.operator[-1], '+')
+                    elif self.isPlus(self.operator[-1]):
+                        self.operator = self.operator.replace(self.operator[-1], '-')
             elif self.isPlus(char):
-                if self.operator == '':
-                    attributeNotToCheck = 'operator'
+                attributeNotToCheck = 'operator'
+                if len(self.operator) == 0:
                     self.operator += char
-                else:
-                    self.addTokenToResultingDictinary(attributes=['operator'])
-                    attributeNotToCheck = 'operator'
-                    self.operator += char
-                    continue
             else:
                 attributeNotToCheck = 'operator'
                 self.operator += char
@@ -124,5 +119,5 @@ class Tokenizer:
 
 
 #d = Tokenizer()
-#rint(d.tokenizeExpression('2 (Pi!= .1244+.43244'))
+#print(d.tokenizeExpression('22'))
 
