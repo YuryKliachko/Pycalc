@@ -42,6 +42,7 @@ class Tokenizer:
             return True
         else:
             return False
+
     def isPlus(self, char):
         if char == '+':
             return True
@@ -116,8 +117,4 @@ class Tokenizer:
                 self.addTokenToResultingDictinary(attributes=attribute)
         self.addTokenToResultingDictinary(attributes=[attributeNotToCheck])
         return self.resultingList
-
-
-#d = Tokenizer()
-#print(d.tokenizeExpression('22'))
 
