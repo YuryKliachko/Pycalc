@@ -92,7 +92,7 @@ class Calculator:
                 if operatorOnstack['type'] != 'function':
                     return Error(id=6, arg=operatorOnstack['value'])
             currentResult = operatorsFunction(firstOperand, secondOperand)
-        if operatorOnstack['value'] == '(':
+        else:
             currentResult = self.getLastOperand()
             return currentResult
         if self.isReturnedAsError(currentResult) is False:
@@ -144,12 +144,14 @@ class Calculator:
                 return currentResult.raiseError()
         for i in range(len(self.operatorStack)):
             currentResult = self.calculateOnStack()
+            if len(self.operatorStack) == 0:
+                return currentResult
             if self.isReturnedAsError(currentResult):
                 return currentResult.raiseError()
         return self.getLastOperand()
 
 
-cal = Calculator(expression='1-sin(pi)')
+cal = Calculator(expression='sin(pi/2^1) + log(1*4+2^2+1, 3^2)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
