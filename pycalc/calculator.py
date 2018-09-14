@@ -14,6 +14,7 @@ class Calculator:
         self.operandStack = []
         self.operatorStack = []
         self.wasChangedLast = ''
+        self.currentOperator = dict()
 
     def isOperandStackEmpty(self):
         if len(self.operandStack) == 0:
@@ -43,19 +44,14 @@ class Calculator:
 
     def removePreLastOperandFromStack(self):
         length = len(self.operandStack)
-        if length == 1:
-            if self.wasChangedLast == 'operatorStack':
-                preLast = self.operandStack[0]
-            else:
-                return None
-        elif length == 0:
-            return None
-        else:
-            preLast = self.operandStack[length-2]
+        preLast = self.operandStack[length - 2]
         del self.operandStack[self.operandStack.index(preLast)]
         return preLast
 
     def putOperatorOnStack(self, operator):
+        if operator['value'] in ('+', '-'):
+            if self.wasChangedLast == 'operatorStack' or self.isOperandStackEmpty():
+                self.putOperandOnStack(0)
         self.operatorStack.append(operator)
         self.wasChangedLast = 'operatorStack'
 
@@ -76,24 +72,27 @@ class Calculator:
             return False
 
     def calculateOnStack(self):
-        operator = self.getOperatorFromStack()
-        operatorsFunction = self.operatorsManager.operatorsDict[operator['value']]['function']
-        if operator['value'] == '(':
+        operatorOnstack = self.getOperatorFromStack()
+        operatorsFunction = self.operatorsManager.operatorsDict[operatorOnstack['value']]['function']
+        if operatorOnstack['value'] == '(':
             return self.getLastOperand()
         else:
             firstOperand = self.removePreLastOperandFromStack()
             secondOperand = self.removeLastOperandFromStack()
             if firstOperand is None:
-                if operator['value'] in ['+', '-']:
+                if operatorOnstack['value'] in ['+', '-']:
                     firstOperand = 0
                 else:
-                    return Error(id=6, arg=operator['value'])
+                    return Error(id=6, arg=operatorOnstack['value'])
             elif secondOperand is None:
-                    return Error(id=6, arg=operator['value'])
+                    return Error(id=6, arg=operatorOnstack['value'])
         currentResult = operatorsFunction(firstOperand, secondOperand)
         if self.isReturnedAsError(currentResult) is False:
             self.putOperandOnStack(currentResult)
             self.removeOperatorFromStack()
+        if self.isOperatorStackEmpty() is False:
+            if self.getOperatorPriority(self.currentOperator['value']) >= self.getOperatorPriority(self.getOperatorFromStack()['value']):
+                currentResult = self.calculateOnStack()
         return currentResult
 
     def prepareExpression(self):
@@ -108,6 +107,7 @@ class Calculator:
             if item['type'] == 'operand':
                 self.putOperandOnStack(item['value'])
             elif item['type'] == 'operator':
+                self.currentOperator = item
                 if self.isOperatorStackEmpty():
                     self.putOperatorOnStack(item)
                 else:
@@ -117,7 +117,7 @@ class Calculator:
                         currentResult = self.calculateOnStack()
                         if self.isReturnedAsError(currentResult):
                             return currentResult.raiseError()
-                        self.putOperatorOnStack(item)
+                        self.putOperatorOnStack(self.currentOperator)
             elif item['type'] == 'openingBracket':
                 self.putOperatorOnStack(item)
             else:
@@ -141,7 +141,7 @@ class Calculator:
         return self.getLastOperand()
 
 
-cal = Calculator(expression='(2-(3-3*(7/2)))//2')
+cal = Calculator(expression='2.0^(2.0^2.0*2.0^2.0)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
