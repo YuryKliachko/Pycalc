@@ -2,6 +2,7 @@ from pycalc.operators_manager import OperatorsManager
 from pycalc.functions_manager import FunctionsManager
 from pycalc.error import Error
 
+
 class Converter:
     def __init__(self):
         self.convertedList = []
@@ -28,7 +29,10 @@ class Converter:
     def validateFunction(self, function: str):
         if self.functionsManager.isValidFunction(function):
             value = self.functionsManager.fetchFunctionValue(function)
-            self.convertedList.append({'type': 'function', 'value': value, 'index': self.itemIndex})
+            if isinstance(value, float):
+                self.convertedList.append({'type': 'operand', 'value': value, 'index': self.itemIndex})
+            else:
+                self.convertedList.append({'type': 'function', 'value': 'function', 'name': function, 'index': self.itemIndex})
         else:
             return Error(id=3, arg=function)
 
@@ -69,21 +73,3 @@ class Converter:
             return Error(id=5, arg=')')
         else:
             return self.convertedList
-
-'''
-#conv = Converter()
-#for i in conv.convertToMath([{'type': 'operator', 'value': '-'},
-                          {'type': 'function', 'value': 'pow'},
-                          {'type': 'openingBracket', 'value': '('},
-                          {'type': 'openingBracket', 'value': '('},
-                          {'type': 'operand', 'value': '.34'},
-                          {'type': 'operator', 'value': '+'},
-                          {'type': 'operator', 'value': '+'},
-                          {'type': 'closingBracket', 'value': ')'},
-                          {'type': 'operator', 'value': '-'},
-                          {'type': 'operator', 'value': '-'},
-                          {'type': 'operand', 'value': '5.'},
-                          {'type': 'closingBracket', 'value': ')'}]):
-
-print(i)
-'''

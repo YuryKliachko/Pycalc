@@ -2,6 +2,7 @@ from pycalc.tokenizer import Tokenizer
 from pycalc.converter import Converter
 from pycalc.error import Error
 from pycalc.operators_manager import OperatorsManager
+from pycalc.functions_manager import FunctionsManager
 
 
 class Calculator:
@@ -10,6 +11,7 @@ class Calculator:
         self.tokenizer = Tokenizer()
         self.converter = Converter()
         self.operatorsManager = OperatorsManager()
+        self.functionsManager = FunctionsManager()
         self.prepared = []
         self.operandStack = []
         self.operatorStack = []
@@ -73,7 +75,10 @@ class Calculator:
 
     def calculateOnStack(self):
         operatorOnstack = self.getOperatorFromStack()
-        operatorsFunction = self.operatorsManager.operatorsDict[operatorOnstack['value']]['function']
+        if operatorOnstack['type'] == 'operator':
+            operatorsFunction = self.operatorsManager.operatorsDict[operatorOnstack['value']]['function']
+        elif operatorOnstack['type'] == 'function':
+            operatorsFunction = self.functionsManager.fetchFunctionValue(operatorOnstack['name'])
         if operatorOnstack['value'] == '(':
             return self.getLastOperand()
         else:
@@ -85,8 +90,12 @@ class Calculator:
                 else:
                     return Error(id=6, arg=operatorOnstack['value'])
             elif secondOperand is None:
+                if operatorOnstack['type'] != 'function':
                     return Error(id=6, arg=operatorOnstack['value'])
-        currentResult = operatorsFunction(firstOperand, secondOperand)
+        if operatorOnstack['type'] == 'function':
+            currentResult = operatorsFunction(firstOperand)
+        else:
+            currentResult = operatorsFunction(firstOperand, secondOperand)
         if self.isReturnedAsError(currentResult) is False:
             self.putOperandOnStack(currentResult)
             self.removeOperatorFromStack()
@@ -106,7 +115,7 @@ class Calculator:
         for item in self.prepared:
             if item['type'] == 'operand':
                 self.putOperandOnStack(item['value'])
-            elif item['type'] == 'operator':
+            elif item['type'] == 'operator' or item['type'] == 'function':
                 self.currentOperator = item
                 if self.isOperatorStackEmpty():
                     self.putOperatorOnStack(item)
@@ -141,7 +150,7 @@ class Calculator:
         return self.getLastOperand()
 
 
-cal = Calculator(expression='2.0^(2.0^2.0*2.0^2.0)')
+cal = Calculator(expression='log(pi)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
