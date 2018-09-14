@@ -83,13 +83,13 @@ class Calculator:
         else:
             firstOperand = self.removePreLastOperandFromStack()
             secondOperand = self.removeLastOperandFromStack()
-            if operator['value'] in ('+', '-'):
-                if firstOperand == None:
+            if firstOperand is None:
+                if operator['value'] in ['+', '-']:
                     firstOperand = 0
-                if secondOperand == None:
+                else:
                     return Error(id=6, arg=operator['value'])
-            else:
-                return Error(id=6, arg=operator['value'])
+            elif secondOperand is None:
+                    return Error(id=6, arg=operator['value'])
         currentResult = operatorsFunction(firstOperand, secondOperand)
         if self.isReturnedAsError(currentResult) is False:
             self.putOperandOnStack(currentResult)
@@ -100,7 +100,7 @@ class Calculator:
         tokenized = self.tokenizer.tokenizeExpression(self.expression)
         converted = self.converter.convertToMath(tokenized)
         if isinstance(converted, Error):
-            return converted.raiseError()
+            return converted
         self.prepared = converted
 
     def calculteResult(self):
@@ -141,7 +141,7 @@ class Calculator:
         return self.getLastOperand()
 
 
-cal = Calculator(expression='(---2+2+)')
+cal = Calculator(expression='(2-(3-3*(7/2)))//2')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
