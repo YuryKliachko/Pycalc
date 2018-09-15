@@ -30,8 +30,11 @@ class Calculator:
         else:
             return False
 
-    def putOperandOnStack(self, operand):
-        self.operandStack.append(operand)
+    def putOperandOnStack(self, operand, index):
+        if self.isFunctionInStack():
+            self.operandStack.append({'type': 'attribute', 'value': operand, 'index': index})
+        else:
+            self.operandStack.append({'type': 'operand', 'value': operand})
         self.wasChangedLast = 'operandStack'
 
     def getLastOperand(self):
@@ -40,7 +43,7 @@ class Calculator:
     def removeLastOperandFromStack(self):
         length = len(self.operandStack)
         if length > 0:
-            return self.operandStack.pop()
+            return self.operandStack.pop()['value']
         else:
             return None
 
@@ -48,12 +51,12 @@ class Calculator:
         length = len(self.operandStack)
         preLast = self.operandStack[length - 2]
         del self.operandStack[self.operandStack.index(preLast)]
-        return preLast
+        return preLast['value']
 
     def putOperatorOnStack(self, operator):
         if operator['value'] in ('+', '-'):
             if self.wasChangedLast == 'operatorStack' or self.isOperandStackEmpty():
-                self.putOperandOnStack(0)
+                self.putOperandOnStack(0, operator['index']-1)
         self.operatorStack.append(operator)
         self.wasChangedLast = 'operatorStack'
 
@@ -73,12 +76,27 @@ class Calculator:
         else:
             return False
 
+    def isFunctionInStack(self):
+        for i in self.operatorStack:
+            if i['type'] == 'function':
+                return True
+
+    def removeArgumentsFromStack(self, funcIndex):
+        counter = 0
+        for operand in self.operandStack:
+            counter += 1
+            if operand['type'] == 'attribute' and operand['index'] > funcIndex:
+                break
+        arguments = tuple(operand['value'] for operand in self.operandStack[counter:8])
+        self.operandStack = self.operandStack[:counter]
+        return arguments
+
     def calculateOnStack(self):
         operatorOnstack = self.getOperatorFromStack()
         if operatorOnstack['type'] == 'function':
             operatorsFunction = self.functionsManager.fetchFunctionValue(operatorOnstack['name'])
-            argument = self.removeLastOperandFromStack()
-            currentResult = operatorsFunction(argument)
+            arguments = self.removeArgumentsFromStack(operatorOnstack['index'])
+            currentResult = operatorsFunction(*arguments)
         elif operatorOnstack['type'] == 'operator':
             operatorsFunction = self.operatorsManager.operatorsDict[operatorOnstack['value']]['function']
             firstOperand = self.removePreLastOperandFromStack()
@@ -96,8 +114,8 @@ class Calculator:
             currentResult = self.getLastOperand()
             return currentResult
         if self.isReturnedAsError(currentResult) is False:
-            self.putOperandOnStack(currentResult)
             self.removeOperatorFromStack()
+            self.putOperandOnStack(currentResult, operatorOnstack['index'])
         if self.isOperatorStackEmpty() is False:
             if self.getOperatorPriority(self.currentOperator['value']) >= self.getOperatorPriority(self.getOperatorFromStack()['value']):
                 currentResult = self.calculateOnStack()
@@ -113,7 +131,7 @@ class Calculator:
     def calculteResult(self):
         for item in self.prepared:
             if item['type'] == 'operand':
-                self.putOperandOnStack(item['value'])
+                self.putOperandOnStack(item['value'], item['index'])
             elif item['type'] == 'operator' or item['type'] == 'function':
                 self.currentOperator = item
                 if self.isOperatorStackEmpty():
@@ -151,7 +169,7 @@ class Calculator:
         return self.getLastOperand()
 
 
-cal = Calculator(expression='sin(pi/2^1) + log(1*4+2^2+1, 3^2)')
+cal = Calculator(expression='sin(-cos(-sin(3.0)-cos(-sin(-3.0*5.0)-sin(cos(log(43.0))))+cos(sin(sin(34.0-2.0^2.0))))--cos(1.0)--cos(0.0)^3.0)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
