@@ -75,13 +75,12 @@ class Calculator:
 
     def calculateOnStack(self):
         operatorOnstack = self.getOperatorFromStack()
-        if operatorOnstack['type'] == 'operator':
-            operatorsFunction = self.operatorsManager.operatorsDict[operatorOnstack['value']]['function']
-        elif operatorOnstack['type'] == 'function':
+        if operatorOnstack['type'] == 'function':
             operatorsFunction = self.functionsManager.fetchFunctionValue(operatorOnstack['name'])
-        if operatorOnstack['value'] == '(':
-            return self.getLastOperand()
-        else:
+            argument = self.removeLastOperandFromStack()
+            currentResult = operatorsFunction(argument)
+        elif operatorOnstack['type'] == 'operator':
+            operatorsFunction = self.operatorsManager.operatorsDict[operatorOnstack['value']]['function']
             firstOperand = self.removePreLastOperandFromStack()
             secondOperand = self.removeLastOperandFromStack()
             if firstOperand is None:
@@ -92,10 +91,10 @@ class Calculator:
             elif secondOperand is None:
                 if operatorOnstack['type'] != 'function':
                     return Error(id=6, arg=operatorOnstack['value'])
-        if operatorOnstack['type'] == 'function':
-            currentResult = operatorsFunction(firstOperand)
-        else:
             currentResult = operatorsFunction(firstOperand, secondOperand)
+        else:
+            currentResult = self.getLastOperand()
+            return currentResult
         if self.isReturnedAsError(currentResult) is False:
             self.putOperandOnStack(currentResult)
             self.removeOperatorFromStack()
@@ -145,12 +144,14 @@ class Calculator:
                 return currentResult.raiseError()
         for i in range(len(self.operatorStack)):
             currentResult = self.calculateOnStack()
+            if len(self.operatorStack) == 0:
+                return currentResult
             if self.isReturnedAsError(currentResult):
                 return currentResult.raiseError()
         return self.getLastOperand()
 
 
-cal = Calculator(expression='log(pi)')
+cal = Calculator(expression='sin(pi/2^1) + log(1*4+2^2+1, 3^2)')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
