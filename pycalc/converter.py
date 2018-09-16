@@ -9,6 +9,7 @@ class Converter:
         self.operatorManager = OperatorsManager()
         self.functionsManager = FunctionsManager()
         self.levelOfEnclosing = 0
+        self.enclosingRequired = False
         self.itemIndex = -1
     
     def validateOperand(self, operand: str):
@@ -21,6 +22,15 @@ class Converter:
 
     def validateOperator(self, operator: str):
         if self.operatorManager.isValidOperator(operator):
+            if self.enclosingRequired == True:
+                self.convertedList.append({'type': 'closingBracket', 'value': ')', 'index': self.itemIndex})
+                self.enclosingRequired = False
+                self.itemIndex += 1
+            elif len(self.convertedList) != 0:
+                if operator == '-' and self.convertedList[-1]['type'] == 'operator':
+                    self.convertedList.append({'type': 'openingBracket', 'value': '(', 'index': self.itemIndex})
+                    self.enclosingRequired = True
+                    self.itemIndex += 1
             priority = self.operatorManager.fetchOperatorsPriority(operator)
             self.convertedList.append({'type': 'operator', 'value': operator, 'priority': priority, 'index': self.itemIndex})
         else:
@@ -72,4 +82,9 @@ class Converter:
         if self.levelOfEnclosing > 0:
             return Error(id=5, arg=')')
         else:
+            if self.enclosingRequired == True:
+                self.convertedList.append({'type': 'closingBracket', 'value': ')', 'index': self.itemIndex})
             return self.convertedList
+
+#c = Converter()
+#print(c.convertToMath([{'type': 'operand', 'value': '20'}, {'type': 'operator', 'value': '/'}, {'type': 'operator', 'value': '-'}, {'type': 'operand', 'value': '2'}]))
