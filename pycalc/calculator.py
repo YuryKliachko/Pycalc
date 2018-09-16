@@ -87,7 +87,7 @@ class Calculator:
             counter += 1
             if operand['type'] == 'attribute' and operand['index'] > funcIndex:
                 break
-        arguments = tuple(operand['value'] for operand in self.operandStack[counter:8])
+        arguments = tuple(operand['value'] for operand in self.operandStack[counter:])
         self.operandStack = self.operandStack[:counter]
         return arguments
 
@@ -169,7 +169,7 @@ class Calculator:
         return self.getLastOperand()['value']
 
 
-cal = Calculator(expression='(2.0^(pi/pi+e/e+2.0^0.0))')
+cal = Calculator(expression='sin(e^log(e^e^sin(23.0),45.0) + cos(3.0+log10(e^-e)))')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
