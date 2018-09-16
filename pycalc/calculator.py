@@ -82,7 +82,7 @@ class Calculator:
                 return True
 
     def removeArgumentsFromStack(self, funcIndex):
-        counter = 0
+        counter = -1
         for operand in self.operandStack:
             counter += 1
             if operand['type'] == 'attribute' and operand['index'] > funcIndex:
@@ -111,7 +111,7 @@ class Calculator:
                     return Error(id=6, arg=operatorOnstack['value'])
             currentResult = operatorsFunction(firstOperand, secondOperand)
         else:
-            currentResult = self.getLastOperand()
+            currentResult = self.getLastOperand()['value']
             return currentResult
         if self.isReturnedAsError(currentResult) is False:
             self.removeOperatorFromStack()
@@ -155,7 +155,7 @@ class Calculator:
                         self.removeOperatorFromStack()
                         break
         if self.isOperatorStackEmpty():
-            return self.getLastOperand()
+            return self.getLastOperand()['value']
         elif len(self.operatorStack) == 1:
             currentResult = self.calculateOnStack()
             if self.isReturnedAsError(currentResult):
@@ -166,10 +166,10 @@ class Calculator:
                 return currentResult
             if self.isReturnedAsError(currentResult):
                 return currentResult.raiseError()
-        return self.getLastOperand()
+        return self.getLastOperand()['value']
 
 
-cal = Calculator(expression='sin(-cos(-sin(3.0)-cos(-sin(-3.0*5.0)-sin(cos(log(43.0))))+cos(sin(sin(34.0-2.0^2.0))))--cos(1.0)--cos(0.0)^3.0)')
+cal = Calculator(expression='(2.0^(pi/pi+e/e+2.0^0.0))')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())
