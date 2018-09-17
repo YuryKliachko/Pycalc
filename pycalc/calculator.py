@@ -137,7 +137,7 @@ class Calculator:
                 if self.isOperatorStackEmpty():
                     self.putOperatorOnStack(item)
                 else:
-                    if self.getOperatorPriority(item['value']) < self.getOperatorPriority(self.getOperatorFromStack()['value']):
+                    if self.getOperatorPriority(item['value']) < self.getOperatorPriority(self.getOperatorFromStack()['value']) or item['value'] == '^' and self.getOperatorFromStack()['value'] == '^':
                         self.putOperatorOnStack(item)
                     else:
                         currentResult = self.calculateOnStack()
