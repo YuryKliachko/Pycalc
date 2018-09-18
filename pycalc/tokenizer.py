@@ -1,74 +1,74 @@
 class Tokenizer:
     def __init__(self):
-        self.resultingList = list()
+        self.resulting_list = list()
         self.operand = str()
         self.operator = str()
         self.function = str()
         self.coma = str()
-        self.openingBracket = ''
-        self.closingBracket = ''
-        self.attributeNotToCheck = str()
+        self.opening_bracket = str()
+        self.closing_bracket = str()
+        self.type_not_to_check = str()
 
-    def isDigit(self, char: str):
+    def is_digit(self, char: str):
         if char.isdigit():
             return True
         else:
             return False
 
-    def isDot(self, char: str):
+    def is_dot(self, char: str):
         if char == '.':
             return True
         else:
             return False
 
-    def isAlpha(self, char: str):
+    def is_alpha(self, char: str):
         if char.isalpha():
             return True
         else:
             return False
 
-    def isOpenningBracket(self, char: str):
+    def is_opening_bracket(self, char: str):
         if char == '(':
             return True
         else:
             return False
 
-    def isClosingBracket(self, char: str):
+    def is_closing_bracket(self, char: str):
         if char == ')':
             return True
         else:
             return False
 
-    def isMinus(self, char):
+    def is_minus(self, char):
         if char == '-':
             return True
         else:
             return False
 
-    def isPlus(self, char):
+    def is_plus(self, char):
         if char == '+':
             return True
         else:
             return False
 
-    def isComa(self, char):
+    def is_coma(self, char):
         if char == ',':
             return True
         else:
             return False
 
-    def defineOperand(self, char):
+    def define_operand(self, char):
         if len(self.function) != 0:
-            self.attributeNotToCheck = 'function'
+            self.type_not_to_check = 'function'
             self.function += char
         else:
-            self.attributeNotToCheck = 'operand'
+            self.type_not_to_check = 'operand'
             self.operand += char
 
 
-    def defineOperator(self, char):
+    def define_operator(self, char):
         if len(self.operator) == 0:
-            self.attributeNotToCheck = 'operator'
+            self.type_not_to_check = 'operator'
             if char == '-':
                 self.operator += char
             elif char == '+':
@@ -76,70 +76,67 @@ class Tokenizer:
             else:
                 self.operator += char
         elif len(self.operator) != 0:
-            self.attributeNotToCheck = 'operator'
+            self.type_not_to_check = 'operator'
             if char == '-':
                 if self.operator == '+':
                     self.operator = '-'
                 elif self.operator == '-':
                     self.operator = '+'
                 else:
-                    self.addTokenToResultingDictinary(['operator'])
+                    self.add_token_to_resulting_dictinary(['operator'])
                     self.operator += char
             elif char == '+':
                 return
             else:
                 self.operator += char
         else:
-            self.attributeNotToCheck = 'operator'
+            self.type_not_to_check = 'operator'
             self.operator += char
 
-    def defineFunction(self, char):
-        self.attributeNotToCheck = 'function'
+    def define_function(self, char):
+        self.type_not_to_check = 'function'
         self.function += char
 
     '''
     Checks what attribute is filled currently except for resulting list and the one where current char in cycle will be
     merged.
     '''
-    def checkWhichAttributesFilled(self, attributeNotToCheck):
+    def check_which_types_filled(self, type_not_to_check):
         result = []
-        for attribute in self.__dict__:
-            if attribute not in ('resultingList', 'attributeNotToCheck') and attribute != attributeNotToCheck and len(self.__dict__[attribute]) != 0:
-                result.append(attribute)
+        for type in self.__dict__:
+            if type not in ('resulting_list', 'type_not_to_check') and type != type_not_to_check and len(self.__dict__[type]) != 0:
+                result.append(type)
         return result
 
-    def addTokenToResultingDictinary(self, attributes):
-        for attribute in attributes:
-            value = self.__dict__[attribute]
-            self.resultingList.append({'type': attribute, 'value': value})
-            self.__dict__[attribute] = ''
+    def add_token_to_resulting_dictinary(self, types):
+        for type in types:
+            value = self.__dict__[type]
+            self.resulting_list.append({'type': type, 'value': value})
+            self.__dict__[type] = ''
 
-    def tokenizeExpression(self, string: str):
+    def tokenize_expression(self, string: str):
         string = string.replace(' ', '').replace(',', ')(').lower()
         assert string != '', 'Expression cannot be empty!'
-        for index, char in enumerate(string):
-            if self.isDigit(char):
-                self.defineOperand(char)
-            elif self.isDot(char):
-                self.defineOperand(char)
-            elif self.isAlpha(char):
-                self.defineFunction(char)
-            elif self.isOpenningBracket(char):
-                self.attributeNotToCheck = None
-                self.openingBracket += char
-            elif self.isClosingBracket(char):
-                self.attributeNotToCheck = None
-                self.closingBracket += char
+        for char in string:
+            if self.is_digit(char):
+                self.define_operand(char)
+            elif self.is_dot(char):
+                self.define_operand(char)
+            elif self.is_alpha(char):
+                self.define_function(char)
+            elif self.is_opening_bracket(char):
+                self.type_not_to_check = None
+                self.opening_bracket += char
+            elif self.is_closing_bracket(char):
+                self.type_not_to_check = None
+                self.closing_bracket += char
             else:
-                self.defineOperator(char)
-            attributes = self.checkWhichAttributesFilled(self.attributeNotToCheck)
+                self.define_operator(char)
+            attributes = self.check_which_types_filled(self.type_not_to_check)
             if len(attributes) != 0:
-                self.addTokenToResultingDictinary(attributes)
-        attributes = self.checkWhichAttributesFilled(attributeNotToCheck=None)
-        self.addTokenToResultingDictinary(attributes)
-        return self.resultingList
+                self.add_token_to_resulting_dictinary(attributes)
+        attributes = self.check_which_types_filled(type_not_to_check=None)
+        self.add_token_to_resulting_dictinary(attributes)
+        return self.resulting_list
 
 
-
-#t = Tokenizer()
-#print(t.tokenizeExpression('1+(2+3*2'))

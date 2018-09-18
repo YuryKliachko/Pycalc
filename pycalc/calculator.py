@@ -21,7 +21,7 @@ class Calculator:
         self.currentOperator = dict()
 
 
-    def isReturnedAsError(self, item):
+    def is_returned_as_error(self, item):
         if isinstance(item, Error):
             return True
         else:
@@ -53,7 +53,7 @@ class Calculator:
         else:
             currentResult = self.operandStack.lastItem.value
             return currentResult
-        if self.isReturnedAsError(currentResult) is False:
+        if self.is_returned_as_error(currentResult) is False:
             self.operatorStack.removeLastItemFromStack()
             self.operandStack.putOnStack(Item(type='operand', value=currentResult, index=self.currentOperator.index), self.operatorStack)
         if self.operatorStack.isEmpty() is False:
@@ -62,7 +62,7 @@ class Calculator:
         return currentResult
 
     def prepareExpression(self):
-        tokenized = self.tokenizer.tokenizeExpression(self.expression)
+        tokenized = self.tokenizer.tokenize_expression(self.expression)
         converted = self.converter.convertToMath(tokenized)
         if isinstance(converted, Error):
             return converted
@@ -81,7 +81,7 @@ class Calculator:
                         self.operatorStack.putOnStack(item, self.operandStack)
                     else:
                         currentResult = self.calculateOnStack()
-                        if self.isReturnedAsError(currentResult):
+                        if self.is_returned_as_error(currentResult):
                             return currentResult.raiseError()
                         self.operatorStack.putOnStack(self.currentOperator, self.operandStack)
             elif item.type == 'openingBracket':
@@ -89,7 +89,7 @@ class Calculator:
             else:
                 for i in range(self.operatorStack.length):
                     currentResult = self.calculateOnStack()
-                    if self.isReturnedAsError(currentResult):
+                    if self.is_returned_as_error(currentResult):
                         return currentResult.raiseError()
                     if self.operatorStack.lastItem.type == 'openingBracket':
                         self.operatorStack.removeLastItemFromStack()
@@ -99,20 +99,20 @@ class Calculator:
             return currentResult
         elif self.operatorStack.length == 1:
             currentResult = self.calculateOnStack()
-            if self.isReturnedAsError(currentResult):
+            if self.is_returned_as_error(currentResult):
                 return currentResult.raiseError()
         for i in range(self.operatorStack.length):
             currentResult = self.calculateOnStack()
             if self.operatorStack.length == 0:
                 return currentResult
-            if self.isReturnedAsError(currentResult):
+            if self.is_returned_as_error(currentResult):
                 return currentResult.raiseError()
         return self.operandStack.lastItem.value
 
 
-cal = Calculator(expression='()')
+cal = Calculator(expression='2^8')
 prepared = cal.prepareExpression()
-if cal.isReturnedAsError(prepared):
+if cal.is_returned_as_error(prepared):
     print(prepared.raiseError())
 else:
     print(cal.calculteResult())
