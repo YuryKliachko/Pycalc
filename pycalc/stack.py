@@ -18,7 +18,7 @@ class Stack:
         stackToRefresh.changedLast = False
         self.changedLast = True
 
-    def getLastItemFromSrack(self):
+    def getLastItemFromStack(self):
         return self.container[self.length-1]
 
     def removeLastItemFromStack(self):
