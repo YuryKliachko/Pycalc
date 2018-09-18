@@ -5,6 +5,7 @@ from pycalc.operators_manager import OperatorsManager
 from pycalc.functions_manager import FunctionsManager
 from pycalc.operator_stack import OperatorStack
 from pycalc.operand_stack import OperandStack
+from pycalc.item import Item
 
 
 class Calculator:
@@ -17,7 +18,6 @@ class Calculator:
         self.prepared = []
         self.operandStack = OperandStack()
         self.operatorStack = OperatorStack()
-        self.wasChangedLast = ''
         self.currentOperator = dict()
 
 
@@ -32,32 +32,32 @@ class Calculator:
         return priority
 
     def calculateOnStack(self):
-        operatorOnstack = self.operatorStack.getLastItemFromStack()
-        if operatorOnstack['type'] == 'function':
-            operatorsFunction = self.functionsManager.fetchFunctionValue(operatorOnstack['name'])
-            arguments = self.operandStack.remove_args_from_stack(operatorOnstack['index'])
+        operatorOnstack = self.operatorStack.lastItem
+        if operatorOnstack.type == 'function':
+            operatorsFunction = operatorOnstack.function
+            arguments = self.operandStack.remove_args_from_stack(operatorOnstack.index)
             currentResult = operatorsFunction(*arguments)
-        elif operatorOnstack['type'] == 'operator':
-            operatorsFunction = self.operatorsManager.operatorsDict[operatorOnstack['value']]['function']
-            firstOperand = self.operandStack.removePreLastItemFromStack()['value']
-            secondOperand = self.operandStack.removeLastItemFromStack()['value']
+        elif operatorOnstack.type == 'operator':
+            operatorsFunction = operatorOnstack.function
+            firstOperand = self.operandStack.removePreLastItemFromStack()
+            secondOperand = self.operandStack.removeLastItemFromStack()
             if firstOperand is None:
-                if operatorOnstack['value'] in ['+', '-']:
-                    firstOperand = 0
+                if operatorOnstack.value in ['+', '-']:
+                    firstOperand = Item(type='operand', value=0, index=self.currentOperator.index)
                 else:
-                    return Error(id=6, arg=operatorOnstack['value'])
+                    return Error(id=6, arg=operatorOnstack.value)
             elif secondOperand is None:
-                if operatorOnstack['type'] != 'function':
-                    return Error(id=6, arg=operatorOnstack['value'])
-            currentResult = operatorsFunction(firstOperand, secondOperand)
+                if operatorOnstack.type != 'function':
+                    return Error(id=6, arg=operatorOnstack.value)
+            currentResult = operatorsFunction(firstOperand.value, secondOperand.value)
         else:
-            currentResult = self.operandStack.getLastItemFromStack()['value']
+            currentResult = self.operandStack.lastItem.value
             return currentResult
         if self.isReturnedAsError(currentResult) is False:
             self.operatorStack.removeLastItemFromStack()
-            self.operandStack.putOnStack({'type': 'operand', 'value': currentResult, 'index': self.currentOperator['index']}, self.operatorStack)
+            self.operandStack.putOnStack(Item(type='operand', value=currentResult, index=self.currentOperator.index), self.operatorStack)
         if self.operatorStack.isEmpty() is False:
-            if self.getOperatorPriority(self.currentOperator['value']) >= self.getOperatorPriority(self.operatorStack.getLastItemFromStack()['value']):
+            if self.currentOperator.priority >= self.operatorStack.lastItem.priority:
                 currentResult = self.calculateOnStack()
         return currentResult
 
@@ -70,34 +70,32 @@ class Calculator:
 
     def calculteResult(self):
         for item in self.prepared:
-            if item['type'] == 'operand':
+            if item.type == 'operand':
                 self.operandStack.putOnStack(item, self.operatorStack)
-            elif item['type'] == 'operator' or item['type'] == 'function':
+            elif item.type == 'operator' or item.type == 'function':
                 self.currentOperator = item
                 if self.operatorStack.isEmpty():
                     self.operatorStack.putOnStack(item, self.operandStack)
                 else:
-                    current_operator_priority = self.getOperatorPriority(item['value'])
-                    stack_operator_priority = self.getOperatorPriority(self.operatorStack.getLastItemFromStack()['value'])
-                    if current_operator_priority < stack_operator_priority or self.currentOperator['value'] == '^' and self.operatorStack.getLastItemFromStack()['value'] == '^':
+                    if self.currentOperator.priority < self.operatorStack.lastItem.priority or self.currentOperator.value == '^' and self.operatorStack.lastItem.value == '^':
                         self.operatorStack.putOnStack(item, self.operandStack)
                     else:
                         currentResult = self.calculateOnStack()
                         if self.isReturnedAsError(currentResult):
                             return currentResult.raiseError()
                         self.operatorStack.putOnStack(self.currentOperator, self.operandStack)
-            elif item['type'] == 'openingBracket':
+            elif item.type == 'openingBracket':
                 self.operatorStack.putOnStack(item, self.operandStack)
             else:
                 for i in range(self.operatorStack.length):
                     currentResult = self.calculateOnStack()
                     if self.isReturnedAsError(currentResult):
                         return currentResult.raiseError()
-                    if self.operatorStack.getLastItemFromStack()['type'] == 'openingBracket':
+                    if self.operatorStack.lastItem.type == 'openingBracket':
                         self.operatorStack.removeLastItemFromStack()
                         break
         if self.operatorStack.isEmpty():
-            currentResult = self.operandStack.getLastItemFromStack()['value']
+            currentResult = self.operandStack.lastItem.value
             return currentResult
         elif self.operatorStack.length == 1:
             currentResult = self.calculateOnStack()
@@ -109,10 +107,10 @@ class Calculator:
                 return currentResult
             if self.isReturnedAsError(currentResult):
                 return currentResult.raiseError()
-        return self.operandStack.getLastItemFromStack()['value']
+        return self.operandStack.lastItem.value
 
 
-cal = Calculator(expression='sin(-Pi/4)^1.5')
+cal = Calculator(expression='()')
 prepared = cal.prepareExpression()
 if cal.isReturnedAsError(prepared):
     print(prepared.raiseError())

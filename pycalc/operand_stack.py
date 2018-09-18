@@ -7,7 +7,7 @@ class OperandStack(Stack):
 
     def putOnStack(self, item, stackToRefresh):
         if stackToRefresh.isFunctionInStack():
-            item['type'] = 'attribute'
+            item.type = 'attribute'
             self.container.append(item)
             stackToRefresh.changedLast = False
             self.changedLast = True
@@ -23,8 +23,8 @@ class OperandStack(Stack):
         counter = -1
         for operand in self.container:
             counter += 1
-            if operand['type'] == 'attribute' and operand['index'] > function_index:
+            if operand.type == 'attribute' and operand.index > function_index:
                 break
-        arguments = tuple(operand['value'] for operand in self.container[counter:])
+        arguments = tuple(operand.value for operand in self.container[counter:])
         self.container = self.container[:counter]
         return arguments
