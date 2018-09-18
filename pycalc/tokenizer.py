@@ -8,6 +8,7 @@ class Tokenizer:
         self.openingBracket = ''
         self.closingBracket = ''
         self.attributeNotToCheck = str()
+
     def isDigit(self, char: str):
         if char.isdigit():
             return True
