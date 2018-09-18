@@ -10,8 +10,7 @@ class OperatorStack(Stack):
     def putOnStack(self, item, stackToRefresh):
         if item['value'] in ('+', '-'):
             if self.changedLast is True or stackToRefresh.isEmpty() is True:
-                stackToRefresh.putOnStack(0, item['index']- 1)
-
+                stackToRefresh.putOnStack({'type': 'operand', 'value': 0, 'index': item['index']-1}, stackToRefresh=self)
         Stack.putOnStack(self, item, stackToRefresh)
 
     def isFunctionInStack(self):
