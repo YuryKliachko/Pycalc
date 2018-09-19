@@ -27,15 +27,17 @@ class Converter:
     def validateOperator(self, operator: str):
         if self.operatorManager.isValidOperator(operator):
             if self.enclosingRequired:
-                self.convertedList.append(Bracket(type='closingBracket', value=')', index=self.itemIndex))
+                self.convertedList.append(Bracket(type='closing_bracket', value=')', index=self.itemIndex))
                 self.enclosingRequired = False
                 self.itemIndex += 1
-            elif len(self.convertedList) != 0:
+            if len(self.convertedList) != 0:
                 previous_item = self.convertedList[-1]
-                if operator == '-' and previous_item.type == 'operator':
-                    self.convertedList.append(Bracket(type='openingBracket', value='(', index=self.itemIndex))
-                    self.enclosingRequired = True
-                    self.itemIndex += 1
+            else:
+                previous_item = None
+            if operator == '-' and (previous_item is None or previous_item.type == 'operator'):
+                self.convertedList.append(Bracket(type='opening_bracket', value='(', index=self.itemIndex))
+                self.enclosingRequired = True
+                self.itemIndex += 1
             priority = self.operatorManager.fetchOperatorsPriority(operator)
             operator_function = self.operatorManager.fetchOperatorsFunction(operator)
             self.convertedList.append(Operator(value=operator, index=self.itemIndex, function=operator_function, priority=priority))
@@ -54,12 +56,19 @@ class Converter:
 
     def validateBracket(self, bracket):
         if bracket == '(':
-            self.convertedList.append(Bracket(type='openingBracket', value=bracket, index=self.itemIndex))
+            if len(self.convertedList) != 0:
+                previous_item = self.convertedList[-1]
+                if previous_item.type == 'operand':
+                    operator = '*'
+                    priority = self.operatorManager.fetchOperatorsPriority(operator)
+                    operator_function = self.operatorManager.fetchOperatorsFunction(operator)
+                    self.convertedList.append(Operator(value=operator, index=self.itemIndex, function=operator_function, priority=priority))
+            self.convertedList.append(Bracket(type='opening_bracket', value=bracket, index=self.itemIndex))
             self.levelOfEnclosing += 1
         elif bracket == ')':
             if self.levelOfEnclosing > 0:
                 self.levelOfEnclosing -= 1
-                self.convertedList.append(Bracket(type='closingBracket', value=bracket, index=self.itemIndex))
+                self.convertedList.append(Bracket(type='closing_bracket', value=bracket, index=self.itemIndex))
             else:
                 return Error(id=4, arg='(')
 
@@ -79,7 +88,7 @@ class Converter:
                 function = self.validateFunction(item['value'])
                 if isinstance(function, Error):
                     return function
-            elif item['type'] == 'openingBracket' or item['type'] == 'closingBracket':
+            elif item['type'] == 'opening_bracket' or item['type'] == 'closing_bracket':
                 bracket = self.validateBracket(item['value'])
                 if isinstance(bracket, Error):
                     return bracket
@@ -89,6 +98,6 @@ class Converter:
             return Error(id=5, arg=')')
         else:
             if self.enclosingRequired == True:
-                self.convertedList.append(Bracket(type='closingBracket', value=')', index=self.itemIndex))
+                self.convertedList.append(Bracket(type='closing_bracket', value=')', index=self.itemIndex))
             return self.convertedList
 

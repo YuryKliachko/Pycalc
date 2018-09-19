@@ -1,4 +1,4 @@
-
+from pycalc.error import Error
 
 class OperatorsManager:
     def __init__(self):

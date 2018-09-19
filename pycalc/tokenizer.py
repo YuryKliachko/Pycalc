@@ -65,7 +65,6 @@ class Tokenizer:
             self.type_not_to_check = 'operand'
             self.operand += char
 
-
     def define_operator(self, char):
         if len(self.operator) == 0:
             self.type_not_to_check = 'operator'
