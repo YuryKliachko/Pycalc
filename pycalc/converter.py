@@ -9,95 +9,95 @@ from pycalc.bracket import Bracket
 
 class Converter:
     def __init__(self):
-        self.convertedList = []
-        self.operatorManager = OperatorsManager()
-        self.functionsManager = FunctionsManager()
-        self.levelOfEnclosing = 0
-        self.enclosingRequired = False
-        self.itemIndex = -1
+        self.converted_list = []
+        self.operator_manager = OperatorsManager()
+        self.functions_manager = FunctionsManager()
+        self.level_of_enclosing = 0
+        self.enclosing_required = False
+        self.item_index = -1
     
-    def validateOperand(self, operand: str):
+    def validate_operand(self, operand: str):
         if '.' in operand and operand.count('.') == 1:
-            self.convertedList.append(Item(type='operand', value=float(operand), index=self.itemIndex))
+            self.converted_list.append(Item(type='operand', value=float(operand), index=self.item_index))
         elif '.' not in operand:
-            self.convertedList.append(Item(type='operand', value=int(operand), index=self.itemIndex))
+            self.converted_list.append(Item(type='operand', value=int(operand), index=self.item_index))
         else:
             return Error(id=1, arg=operand)
 
-    def validateOperator(self, operator: str):
-        if self.operatorManager.isValidOperator(operator):
-            if self.enclosingRequired:
-                self.convertedList.append(Bracket(type='closing_bracket', value=')', index=self.itemIndex))
-                self.enclosingRequired = False
-                self.itemIndex += 1
-            if len(self.convertedList) != 0:
-                previous_item = self.convertedList[-1]
+    def validate_operator(self, operator: str):
+        if self.operator_manager.isValidOperator(operator):
+            if self.enclosing_required:
+                self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
+                self.enclosing_required = False
+                self.item_index += 1
+            if len(self.converted_list) != 0:
+                previous_item = self.converted_list[-1]
             else:
                 previous_item = None
             if operator == '-' and (previous_item is None or previous_item.type == 'operator'):
-                self.convertedList.append(Bracket(type='opening_bracket', value='(', index=self.itemIndex))
-                self.enclosingRequired = True
-                self.itemIndex += 1
-            priority = self.operatorManager.fetchOperatorsPriority(operator)
-            operator_function = self.operatorManager.fetchOperatorsFunction(operator)
-            self.convertedList.append(Operator(value=operator, index=self.itemIndex, function=operator_function, priority=priority))
+                self.converted_list.append(Bracket(type='opening_bracket', value='(', index=self.item_index))
+                self.enclosing_required = True
+                self.item_index += 1
+            priority = self.operator_manager.fetchOperatorsPriority(operator)
+            operator_function = self.operator_manager.fetchOperatorsFunction(operator)
+            self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
         else:
             return Error(id=2, arg=operator)
 
-    def validateFunction(self, function: str):
-        if self.functionsManager.isValidFunction(function):
-            function_object = self.functionsManager.fetchFunctionValue(function)
+    def validate_function(self, function: str):
+        if self.functions_manager.isValidFunction(function):
+            function_object = self.functions_manager.fetchFunctionValue(function)
             if isinstance(function_object, float) or isinstance(function_object, int):
-                self.convertedList.append(Item(type='operand', value=function_object, index=self.itemIndex))
+                self.converted_list.append(Item(type='operand', value=function_object, index=self.item_index))
             else:
-                self.convertedList.append(Function(value=function, index=self.itemIndex, function=function_object))
+                self.converted_list.append(Function(value=function, index=self.item_index, function=function_object))
         else:
             return Error(id=3, arg=function)
 
-    def validateBracket(self, bracket):
+    def validate_bracket(self, bracket):
         if bracket == '(':
-            if len(self.convertedList) != 0:
-                previous_item = self.convertedList[-1]
+            if len(self.converted_list) != 0:
+                previous_item = self.converted_list[-1]
                 if previous_item.type == 'operand':
                     operator = '*'
-                    priority = self.operatorManager.fetchOperatorsPriority(operator)
-                    operator_function = self.operatorManager.fetchOperatorsFunction(operator)
-                    self.convertedList.append(Operator(value=operator, index=self.itemIndex, function=operator_function, priority=priority))
-            self.convertedList.append(Bracket(type='opening_bracket', value=bracket, index=self.itemIndex))
-            self.levelOfEnclosing += 1
+                    priority = self.operator_manager.fetchOperatorsPriority(operator)
+                    operator_function = self.operator_manager.fetchOperatorsFunction(operator)
+                    self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
+            self.converted_list.append(Bracket(type='opening_bracket', value=bracket, index=self.item_index))
+            self.level_of_enclosing += 1
         elif bracket == ')':
-            if self.levelOfEnclosing > 0:
-                self.levelOfEnclosing -= 1
-                self.convertedList.append(Bracket(type='closing_bracket', value=bracket, index=self.itemIndex))
+            if self.level_of_enclosing > 0:
+                self.level_of_enclosing -= 1
+                self.converted_list.append(Bracket(type='closing_bracket', value=bracket, index=self.item_index))
             else:
                 return Error(id=4, arg='(')
 
-    def convertToMath(self, tokenizedList):
-        convertedList = []
-        for item in tokenizedList:
-            self.itemIndex += 1
+    def convert_to_math(self, tokenized_list):
+        converted_list = []
+        for item in tokenized_list:
+            self.item_index += 1
             if item['type'] == 'operand':
-                operand = self.validateOperand(item['value'])
+                operand = self.validate_operand(item['value'])
                 if isinstance(operand, Error):
                     return operand
             elif item['type'] is 'operator':
-                operator = self.validateOperator(item['value'])
+                operator = self.validate_operator(item['value'])
                 if isinstance(operator, Error):
                     return operator
             elif item['type'] == 'function':
-                function = self.validateFunction(item['value'])
+                function = self.validate_function(item['value'])
                 if isinstance(function, Error):
                     return function
             elif item['type'] == 'opening_bracket' or item['type'] == 'closing_bracket':
-                bracket = self.validateBracket(item['value'])
+                bracket = self.validate_bracket(item['value'])
                 if isinstance(bracket, Error):
                     return bracket
             else:
-                convertedList.append(item)
-        if self.levelOfEnclosing > 0:
+                converted_list.append(item)
+        if self.level_of_enclosing > 0:
             return Error(id=5, arg=')')
         else:
-            if self.enclosingRequired == True:
-                self.convertedList.append(Bracket(type='closing_bracket', value=')', index=self.itemIndex))
-            return self.convertedList
+            if self.enclosing_required:
+                self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
+            return self.converted_list
 

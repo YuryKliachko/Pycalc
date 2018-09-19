@@ -26,10 +26,6 @@ class Calculator:
         else:
             return False
 
-    def getOperatorPriority(self, operator):
-        priority = self.operatorsManager.fetchOperatorsPriority(operator)
-        return priority
-
     def calculateOnStack(self):
         operatorOnstack = self.operatorStack.lastItem
         if operatorOnstack.type == 'function':
@@ -64,7 +60,7 @@ class Calculator:
 
     def prepareExpression(self):
         tokenized = self.tokenizer.tokenize_expression(self.expression)
-        converted = self.converter.convertToMath(tokenized)
+        converted = self.converter.convert_to_math(tokenized)
         if isinstance(converted, Error):
             return converted
         self.prepared = converted
@@ -110,10 +106,11 @@ class Calculator:
                 return currentResult.raiseError()
         return self.operandStack.lastItem.value
 
-
-cal = Calculator(expression='-2/2')
+'''
+cal = Calculator(expression='sin(30)')
 prepared = cal.prepareExpression()
 if cal.is_returned_as_error(prepared):
     print(prepared.raiseError())
 else:
     print(cal.calculteResult())
+'''
