@@ -111,7 +111,7 @@ class Calculator:
         return self.operandStack.lastItem.value
 
 
-cal = Calculator(expression='-2/2')
+cal = Calculator(expression='100/(3*0)')
 prepared = cal.prepareExpression()
 if cal.is_returned_as_error(prepared):
     print(prepared.raiseError())
