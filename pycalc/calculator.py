@@ -26,10 +26,6 @@ class Calculator:
         else:
             return False
 
-    def getOperatorPriority(self, operator):
-        priority = self.operatorsManager.fetchOperatorsPriority(operator)
-        return priority
-
     def calculateOnStack(self):
         operatorOnstack = self.operatorStack.lastItem
         if operatorOnstack.type == 'function':
@@ -110,10 +106,11 @@ class Calculator:
                 return currentResult.raiseError()
         return self.operandStack.lastItem.value
 
-
-cal = Calculator(expression='sin(e^log(e^e^sin(23.0),45.0) + cos(3.0+log10(e^-e)))')
+'''
+cal = Calculator(expression='sin(30)')
 prepared = cal.prepareExpression()
 if cal.is_returned_as_error(prepared):
     print(prepared.raiseError())
 else:
     print(cal.calculteResult())
+'''
