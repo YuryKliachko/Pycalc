@@ -64,7 +64,7 @@ class Calculator:
 
     def prepareExpression(self):
         tokenized = self.tokenizer.tokenize_expression(self.expression)
-        converted = self.converter.convertToMath(tokenized)
+        converted = self.converter.convert_to_math(tokenized)
         if isinstance(converted, Error):
             return converted
         self.prepared = converted
@@ -111,7 +111,7 @@ class Calculator:
         return self.operandStack.lastItem.value
 
 
-cal = Calculator(expression='100/(3*0)')
+cal = Calculator(expression='sin(e^log(e^e^sin(23.0),45.0) + cos(3.0+log10(e^-e)))')
 prepared = cal.prepareExpression()
 if cal.is_returned_as_error(prepared):
     print(prepared.raiseError())
