@@ -26,14 +26,14 @@ class Converter:
 
     def validate_operator(self, operator: str):
         if self.operator_manager.isValidOperator(operator):
-            if self.enclosing_required:
-                self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
-                self.enclosing_required = False
-                self.item_index += 1
             if len(self.converted_list) != 0:
                 previous_item = self.converted_list[-1]
             else:
                 previous_item = None
+            if self.enclosing_required and previous_item.type != 'opening_bracket':
+                self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
+                self.enclosing_required = False
+                self.item_index += 1
             if operator == '-' and (previous_item is None or previous_item.type == 'operator'):
                 self.converted_list.append(Bracket(type='opening_bracket', value='(', index=self.item_index))
                 self.enclosing_required = True
