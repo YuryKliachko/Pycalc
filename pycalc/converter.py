@@ -15,26 +15,36 @@ class Converter:
         self.level_of_enclosing = 0
         self.enclosing_required = False
         self.item_index = -1
+
+    @property
+    def previous_item(self):
+        if len(self.converted_list) != 0:
+            return self.converted_list[-1]
+        else:
+            return None
     
     def validate_operand(self, operand: str):
         if '.' in operand and operand.count('.') == 1:
-            self.converted_list.append(Item(type='operand', value=float(operand), index=self.item_index))
+            operand = float(operand)
         elif '.' not in operand:
-            self.converted_list.append(Item(type='operand', value=int(operand), index=self.item_index))
+            operand = int(operand)
         else:
             return Error(id=1, arg=operand)
+        if self.previous_item is not None:
+            if self.previous_item.type == 'closing_bracket':
+                operator = '*'
+                priority = self.operator_manager.fetchOperatorsPriority(operator)
+                operator_function = self.operator_manager.fetchOperatorsFunction(operator)
+                self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
+        self.converted_list.append(Item(type='operand', value=operand, index=self.item_index))
 
     def validate_operator(self, operator: str):
         if self.operator_manager.isValidOperator(operator):
-            if len(self.converted_list) != 0:
-                previous_item = self.converted_list[-1]
-            else:
-                previous_item = None
-            if self.enclosing_required and previous_item.type != 'opening_bracket':
+            if self.enclosing_required and self.previous_item.type != 'opening_bracket':
                 self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
                 self.enclosing_required = False
                 self.item_index += 1
-            if operator == '-' and (previous_item is None or previous_item.type == 'operator'):
+            if operator == '-' and (self.previous_item is None or self.previous_item.type == 'operator'):
                 self.converted_list.append(Bracket(type='opening_bracket', value='(', index=self.item_index))
                 self.enclosing_required = True
                 self.item_index += 1
@@ -56,9 +66,8 @@ class Converter:
 
     def validate_bracket(self, bracket):
         if bracket == '(':
-            if len(self.converted_list) != 0:
-                previous_item = self.converted_list[-1]
-                if previous_item.type == 'operand':
+            if self.previous_item is not None:
+                if self.previous_item.type == 'operand':
                     operator = '*'
                     priority = self.operator_manager.fetchOperatorsPriority(operator)
                     operator_function = self.operator_manager.fetchOperatorsFunction(operator)

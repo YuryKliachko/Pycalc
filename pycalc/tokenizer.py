@@ -1,3 +1,5 @@
+from pycalc.error import Error
+
 class Tokenizer:
     def __init__(self):
         self.resulting_list = list()
@@ -115,7 +117,8 @@ class Tokenizer:
 
     def tokenize_expression(self, string: str):
         string = string.replace(' ', '').replace(',', ')(').lower()
-        assert string != '', 'Expression cannot be empty!'
+        if string == '':
+            raise Exception('Cannot be empty')
         for char in string:
             if self.is_digit(char):
                 self.define_operand(char)
