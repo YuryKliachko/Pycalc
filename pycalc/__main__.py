@@ -1,5 +1,6 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, PARSER
 from pycalc.calculator import Calculator
+
 
 def main():
     parser = ArgumentParser()
@@ -11,6 +12,7 @@ def main():
         print(prepared.raiseError())
     else:
         print(calc.calculteResult())
+
 
 if __name__ == '__main__':
     main()

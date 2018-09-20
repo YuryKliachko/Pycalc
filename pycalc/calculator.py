@@ -106,11 +106,11 @@ class Calculator:
                 return currentResult.raiseError()
         return self.operandStack.lastItem.value
 
-'''
-cal = Calculator(expression='sin(30)')
+
+cal = Calculator(expression='2*sin(pi/2)')
 prepared = cal.prepareExpression()
 if cal.is_returned_as_error(prepared):
     print(prepared.raiseError())
 else:
     print(cal.calculteResult())
-'''
+
