@@ -7,11 +7,11 @@ def main():
     parser.add_argument('EXPRESSION', help='expression string to evaluate')
     args = parser.parse_args()
     calc = Calculator(expression=args.EXPRESSION)
-    prepared = calc.prepareExpression()
+    prepared = calc.prepare_expression()
     if calc.is_returned_as_error(prepared):
         print(prepared.raiseError())
     else:
-        print(calc.calculteResult())
+        print(calc.calculte_result())
 
 
 if __name__ == '__main__':

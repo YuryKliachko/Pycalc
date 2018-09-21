@@ -40,14 +40,15 @@ class Converter:
 
     def validate_operator(self, operator: str):
         if self.operator_manager.isValidOperator(operator):
-            if self.enclosing_required and self.previous_item.type != 'opening_bracket':
-                self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
-                self.enclosing_required = False
-                self.item_index += 1
-            if operator == '-' and (self.previous_item is None or self.previous_item.type == 'operator'):
-                self.converted_list.append(Bracket(type='opening_bracket', value='(', index=self.item_index))
-                self.enclosing_required = True
-                self.item_index += 1
+            if self.previous_item is not None:
+                if self.enclosing_required and self.previous_item.type != 'opening_bracket':
+                    self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
+                    self.enclosing_required = False
+                    self.item_index += 1
+                if operator == '-' and self.previous_item.type == 'operator':
+                    self.converted_list.append(Bracket(type='opening_bracket', value='(', index=self.item_index))
+                    self.enclosing_required = True
+                    self.item_index += 1
             priority = self.operator_manager.fetchOperatorsPriority(operator)
             operator_function = self.operator_manager.fetchOperatorsFunction(operator)
             self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
