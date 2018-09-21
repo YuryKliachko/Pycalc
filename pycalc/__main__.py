@@ -9,9 +9,9 @@ def main():
     calc = Calculator(expression=args.EXPRESSION)
     prepared = calc.prepare_expression()
     if calc.is_returned_as_error(prepared):
-        print(prepared.raiseError())
+        print(prepared.raise_error())
     else:
-        print(calc.calculte_result())
+        print(calc.calculate_result())
 
 
 if __name__ == '__main__':

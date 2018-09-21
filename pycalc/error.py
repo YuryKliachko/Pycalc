@@ -14,5 +14,5 @@ class Error:
         self.id = id
         self.text = errors[self.id](self.arg)
 
-    def raiseError(self):
+    def raise_error(self):
         return self.text
