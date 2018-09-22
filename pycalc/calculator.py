@@ -23,15 +23,15 @@ class Calculator:
             return False
 
     def calculate_on_stack(self):
-        operator_on_stack = self.operator_stack.lastItem
+        operator_on_stack = self.operator_stack.last_item
         if operator_on_stack.type == 'function':
             operators_function = operator_on_stack.function
             arguments = self.operand_stack.remove_args_from_stack(operator_on_stack.index)
             current_result = operators_function(*arguments)
         elif operator_on_stack.type == 'operator':
             operators_function = operator_on_stack.function
-            first_operand = self.operand_stack.removePreLastItemFromStack()
-            second_operand = self.operand_stack.removeLastItemFromStack()
+            first_operand = self.operand_stack.remove_pre_last_item_from_stack()
+            second_operand = self.operand_stack.remove_last_item_from_stack()
             if first_operand is None:
                 if operator_on_stack.value in ['+', '-']:
                     first_operand = Item(type='operand', value=0, index=self.current_operator.index)
@@ -42,71 +42,60 @@ class Calculator:
                     return Error(id=6, arg=operator_on_stack.value)
             current_result = operators_function(first_operand.value, second_operand.value)
         else:
-            current_result = self.operand_stack.lastItem.value
+            current_result = self.operand_stack.last_item.value
             return current_result
-        if self.is_returned_as_error(current_result):
-            return current_result
-        else:
-            self.operator_stack.removeLastItemFromStack()
-            self.operand_stack.putOnStack(Item(type='operand', value=current_result, index=self.current_operator.index), self.operator_stack)
-            if self.operator_stack.isEmpty() is False:
-                if self.current_operator.priority >= self.operator_stack.lastItem.priority:
-                    current_result = self.calculate_on_stack()
+        self.operator_stack.remove_last_item_from_stack()
+        self.operand_stack.put_on_stack(Item(type='operand', value=current_result, index=self.current_operator.index), self.operator_stack)
+        if self.operator_stack.is_empty() is False:
+            if self.current_operator.priority >= self.operator_stack.last_item.priority:
+                current_result = self.calculate_on_stack()
         return current_result
 
     def prepare_expression(self):
         tokenized = self.tokenizer.tokenize_expression(self.expression)
         converted = self.converter.convert_to_math(tokenized)
-        if isinstance(converted, Error):
-            return converted
         self.prepared = converted
 
-    def calculte_result(self):
+    def calculate_result(self):
         for item in self.prepared:
             if item.type == 'operand':
-                self.operand_stack.putOnStack(item, self.operator_stack)
+                self.operand_stack.put_on_stack(item, self.operator_stack)
             elif item.type == 'operator' or item.type == 'function':
                 self.current_operator = item
-                if self.operator_stack.isEmpty():
-                    self.operator_stack.putOnStack(item, self.operand_stack)
+                if self.operator_stack.is_empty():
+                    self.operator_stack.put_on_stack(item, self.operand_stack)
                 else:
-                    if self.current_operator.priority < self.operator_stack.lastItem.priority or self.current_operator.value == '^' and self.operator_stack.lastItem.value == '^':
-                        self.operator_stack.putOnStack(item, self.operand_stack)
+                    if self.current_operator.priority < self.operator_stack.last_item.priority or self.current_operator.value == '^' and self.operator_stack.last_item.value == '^':
+                        self.operator_stack.put_on_stack(item, self.operand_stack)
                     else:
-                        current_result = self.calculate_on_stack()
-                        if self.is_returned_as_error(current_result):
-                            return current_result.raiseError()
-                        self.operator_stack.putOnStack(self.current_operator, self.operand_stack)
+                        self.calculate_on_stack()
+                        self.operator_stack.put_on_stack(self.current_operator, self.operand_stack)
             elif item.type == 'opening_bracket':
-                self.operator_stack.putOnStack(item, self.operand_stack)
+                self.operator_stack.put_on_stack(item, self.operand_stack)
             else:
                 for i in range(self.operator_stack.length):
-                    current_result = self.calculate_on_stack()
-                    if self.is_returned_as_error(current_result):
-                        return current_result.raiseError()
-                    if self.operator_stack.lastItem.type == 'opening_bracket':
-                        self.operator_stack.removeLastItemFromStack()
+                    self.calculate_on_stack()
+                    if self.operator_stack.last_item.type == 'opening_bracket':
+                        self.operator_stack.remove_last_item_from_stack()
                         break
-        if self.operator_stack.isEmpty():
-            current_result = self.operand_stack.lastItem.value
+        if self.operator_stack.is_empty():
+            current_result = self.operand_stack.last_item.value
             return current_result
         elif self.operator_stack.length == 1:
-            current_result = self.calculate_on_stack()
-            if self.is_returned_as_error(current_result):
-                return current_result.raiseError()
+            self.calculate_on_stack()
         for i in range(self.operator_stack.length):
             current_result = self.calculate_on_stack()
             if self.operator_stack.length == 0:
                 return current_result
-            if self.is_returned_as_error(current_result):
-                return current_result.raiseError()
-        return self.operand_stack.lastItem.value
+        return self.operand_stack.last_item.value
 
+"""
+try:
+    cal = Calculator(expression='100/3%2^2')
+    prepared = cal.prepare_expression()
+    print(cal.calculate_result())
+except Error as e:
+    print(e.text)
+"""
 
-cal = Calculator(expression='-2(-3)')
-prepared = cal.prepare_expression()
-if cal.is_returned_as_error(prepared):
-    print(prepared.raiseError())
-else:
-    print(cal.calculte_result())
 

@@ -1,28 +1,28 @@
 class Stack:
     def __init__(self):
         self.container = list()
-        self.changedLast = False
+        self.changed_last = False
 
     @property
     def length(self):
         return len(self.container)
 
-    def isEmpty(self):
+    def is_empty(self):
         if self.length == 0:
             return True
         else:
             return False
 
-    def putOnStack(self, item, stackToRefresh):
+    def put_on_stack(self, item, stack_to_refresh):
         self.container.append(item)
-        stackToRefresh.changedLast = False
-        self.changedLast = True
+        stack_to_refresh.changed_last = False
+        self.changed_last = True
 
     @property
-    def lastItem(self):
+    def last_item(self):
         return self.container[self.length-1]
 
-    def removeLastItemFromStack(self):
+    def remove_last_item_from_stack(self):
         if self.length > 0:
             return self.container.pop()
         else:

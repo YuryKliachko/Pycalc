@@ -1,23 +1,24 @@
 from pycalc.stack import Stack
 
+
 class OperandStack(Stack):
     def __init__(self):
         Stack.__init__(self)
         self.name = 'operandStack'
 
-    def putOnStack(self, item, stackToRefresh):
-        if stackToRefresh.isFunctionInStack():
+    def put_on_stack(self, item, stack_to_refresh):
+        if stack_to_refresh.is_function_on_stack():
             item.type = 'attribute'
             self.container.append(item)
-            stackToRefresh.changedLast = False
-            self.changedLast = True
+            stack_to_refresh.changed_last = False
+            self.changed_last = True
         else:
-            Stack.putOnStack(self, item, stackToRefresh)
+            Stack.put_on_stack(self, item, stack_to_refresh)
 
-    def removePreLastItemFromStack(self):
-        preLast = self.container[self.length-2]
-        del self.container[self.container.index(preLast)]
-        return preLast
+    def remove_pre_last_item_from_stack(self):
+        pre_last = self.container[self.length-2]
+        del self.container[self.container.index(pre_last)]
+        return pre_last
 
     def remove_args_from_stack(self, function_index):
         counter = -1

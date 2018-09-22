@@ -1,17 +1,18 @@
 from argparse import ArgumentParser, PARSER
 from pycalc.calculator import Calculator
+from pycalc.error import Error
 
 
 def main():
     parser = ArgumentParser()
     parser.add_argument('EXPRESSION', help='expression string to evaluate')
     args = parser.parse_args()
-    calc = Calculator(expression=args.EXPRESSION)
-    prepared = calc.prepare_expression()
-    if calc.is_returned_as_error(prepared):
-        print(prepared.raiseError())
-    else:
-        print(calc.calculte_result())
+    try:
+        calc = Calculator(expression=args.EXPRESSION)
+        calc.prepare_expression()
+        print(calc.calculate_result())
+    except Error as error:
+        print(error.text)
 
 
 if __name__ == '__main__':

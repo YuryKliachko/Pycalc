@@ -84,7 +84,7 @@ class Tokenizer:
                 elif self.operator == '-':
                     self.operator = '+'
                 else:
-                    self.add_token_to_resulting_dictinary(['operator'])
+                    self.add_token_to_resulting_dictionary(['operator'])
                     self.operator += char
             elif char == '+':
                 return
@@ -109,7 +109,7 @@ class Tokenizer:
                 result.append(type)
         return result
 
-    def add_token_to_resulting_dictinary(self, types):
+    def add_token_to_resulting_dictionary(self, types):
         for type in types:
             value = self.__dict__[type]
             self.resulting_list.append({'type': type, 'value': value})
@@ -118,7 +118,7 @@ class Tokenizer:
     def tokenize_expression(self, string: str):
         string = string.replace(' ', '').replace(',', ')(').lower()
         if string == '':
-            raise Exception('Cannot be empty')
+            return Error(id=9)
         for char in string:
             if self.is_digit(char):
                 self.define_operand(char)
@@ -136,9 +136,9 @@ class Tokenizer:
                 self.define_operator(char)
             attributes = self.check_which_types_filled(self.type_not_to_check)
             if len(attributes) != 0:
-                self.add_token_to_resulting_dictinary(attributes)
+                self.add_token_to_resulting_dictionary(attributes)
         attributes = self.check_which_types_filled(type_not_to_check=None)
-        self.add_token_to_resulting_dictinary(attributes)
+        self.add_token_to_resulting_dictionary(attributes)
         return self.resulting_list
 
 
