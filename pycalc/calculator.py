@@ -44,21 +44,16 @@ class Calculator:
         else:
             current_result = self.operand_stack.last_item.value
             return current_result
-        if self.is_returned_as_error(current_result):
-            return current_result
-        else:
-            self.operator_stack.remove_last_item_from_stack()
-            self.operand_stack.put_on_stack(Item(type='operand', value=current_result, index=self.current_operator.index), self.operator_stack)
-            if self.operator_stack.is_empty() is False:
-                if self.current_operator.priority >= self.operator_stack.last_item.priority:
-                    current_result = self.calculate_on_stack()
+        self.operator_stack.remove_last_item_from_stack()
+        self.operand_stack.put_on_stack(Item(type='operand', value=current_result, index=self.current_operator.index), self.operator_stack)
+        if self.operator_stack.is_empty() is False:
+            if self.current_operator.priority >= self.operator_stack.last_item.priority:
+                current_result = self.calculate_on_stack()
         return current_result
 
     def prepare_expression(self):
         tokenized = self.tokenizer.tokenize_expression(self.expression)
         converted = self.converter.convert_to_math(tokenized)
-        if isinstance(converted, Error):
-            return converted
         self.prepared = converted
 
     def calculate_result(self):
@@ -73,17 +68,13 @@ class Calculator:
                     if self.current_operator.priority < self.operator_stack.last_item.priority or self.current_operator.value == '^' and self.operator_stack.last_item.value == '^':
                         self.operator_stack.put_on_stack(item, self.operand_stack)
                     else:
-                        current_result = self.calculate_on_stack()
-                        if self.is_returned_as_error(current_result):
-                            return current_result.raise_error()
+                        self.calculate_on_stack()
                         self.operator_stack.put_on_stack(self.current_operator, self.operand_stack)
             elif item.type == 'opening_bracket':
                 self.operator_stack.put_on_stack(item, self.operand_stack)
             else:
                 for i in range(self.operator_stack.length):
-                    current_result = self.calculate_on_stack()
-                    if self.is_returned_as_error(current_result):
-                        return current_result.raise_error()
+                    self.calculate_on_stack()
                     if self.operator_stack.last_item.type == 'opening_bracket':
                         self.operator_stack.remove_last_item_from_stack()
                         break
@@ -91,22 +82,18 @@ class Calculator:
             current_result = self.operand_stack.last_item.value
             return current_result
         elif self.operator_stack.length == 1:
-            current_result = self.calculate_on_stack()
-            if self.is_returned_as_error(current_result):
-                return current_result.raise_error()
+            self.calculate_on_stack()
         for i in range(self.operator_stack.length):
             current_result = self.calculate_on_stack()
             if self.operator_stack.length == 0:
                 return current_result
-            if self.is_returned_as_error(current_result):
-                return current_result.raise_error()
         return self.operand_stack.last_item.value
 
-
-cal = Calculator(expression='ee')
-prepared = cal.prepare_expression()
-if cal.is_returned_as_error(prepared):
-    print(prepared.raise_error())
-else:
+try:
+    cal = Calculator(expression='100/3%2^2')
+    prepared = cal.prepare_expression()
     print(cal.calculate_result())
+except Error as e:
+    print(e.text)
+
 

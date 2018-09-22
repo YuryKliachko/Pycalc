@@ -118,7 +118,7 @@ class Tokenizer:
     def tokenize_expression(self, string: str):
         string = string.replace(' ', '').replace(',', ')(').lower()
         if string == '':
-            raise Exception('Cannot be empty')
+            return Error(id=9)
         for char in string:
             if self.is_digit(char):
                 self.define_operand(char)
