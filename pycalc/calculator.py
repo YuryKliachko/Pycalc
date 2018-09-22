@@ -89,11 +89,13 @@ class Calculator:
                 return current_result
         return self.operand_stack.last_item.value
 
+"""
 try:
     cal = Calculator(expression='100/3%2^2')
     prepared = cal.prepare_expression()
     print(cal.calculate_result())
 except Error as e:
     print(e.text)
+"""
 
 
