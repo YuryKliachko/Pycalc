@@ -2,19 +2,20 @@ import math
 
 
 class FunctionsManager:
-    def __init__(self):
-        self.functions_dict = {'pow': pow, 'abs': abs, 'round': round}
-        self.functions_dict.update(math.__dict__)
+    functions_dict = {'pow': pow, 'abs': abs, 'round': round}
+    functions_dict.update(math.__dict__)
 
-    def isValidFunction(self, function):
-        if function in self.functions_dict.keys():
+    @staticmethod
+    def is_valid_function(function):
+        if function in FunctionsManager.functions_dict.keys():
             return True
         else:
             return False
-
-    def fetchFunctionValue(self, function):
-        value = self.functions_dict[function]
+    @staticmethod
+    def fetch_function_value(function):
+        value = FunctionsManager.functions_dict[function]
         return value
 
-    def addNewDict(self, dictionary: dict):
-        self.functions_dict.update(dictionary)
+    @staticmethod
+    def add_new_dict(dictionary: dict):
+        FunctionsManager.functions_dict.update(dictionary)
