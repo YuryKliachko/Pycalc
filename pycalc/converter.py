@@ -11,7 +11,7 @@ class Converter:
     def __init__(self):
         self.converted_list = []
         self.operator_manager = OperatorsManager()
-        self.functions_manager = FunctionsManager()
+        #self.functions_manager = FunctionsManager()
         self.level_of_enclosing = 0
         self.enclosing_required = False
         self.item_index = -1
@@ -61,8 +61,8 @@ class Converter:
             return Error(id=2, arg=operator)
 
     def validate_function(self, function: str):
-        if self.functions_manager.isValidFunction(function):
-            function_object = self.functions_manager.fetchFunctionValue(function)
+        if FunctionsManager.is_valid_function(function):
+            function_object = FunctionsManager.fetch_function_value(function)
             if isinstance(function_object, float) or isinstance(function_object, int):
                 self.converted_list.append(Item(type='operand', value=function_object, index=self.item_index))
             else:
