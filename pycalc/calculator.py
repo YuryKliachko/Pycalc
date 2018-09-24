@@ -91,11 +91,11 @@ class Calculator:
 
 """
 try:
-    cal = Calculator(expression='log10(20)')
+    cal = Calculator(expression='--2(sin(30))')
     prepared = cal.prepare_expression()
     print(cal.calculate_result())
 except Error as e:
     print(e.text)
-
 """
+
 

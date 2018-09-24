@@ -74,6 +74,10 @@ class Converter:
         if bracket == '(':
             if self.previous_item is not None:
                 if self.previous_item.type == 'operand':
+                    if self.enclosing_required and self.previous_item.type != 'opening_bracket':
+                        self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
+                        self.enclosing_required = False
+                        self.item_index += 1
                     operator = '*'
                     priority = self.operator_manager.fetch_operators_priority(operator)
                     operator_function = self.operator_manager.fetch_operators_function(operator)

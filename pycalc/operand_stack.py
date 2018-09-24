@@ -4,7 +4,6 @@ from pycalc.stack import Stack
 class OperandStack(Stack):
     def __init__(self):
         Stack.__init__(self)
-        self.name = 'operandStack'
 
     def put_on_stack(self, item, stack_to_refresh):
         if stack_to_refresh.is_function_on_stack():
