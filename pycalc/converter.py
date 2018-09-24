@@ -36,6 +36,8 @@ class Converter:
                 priority = self.operator_manager.fetch_operators_priority(operator)
                 operator_function = self.operator_manager.fetch_operators_function(operator)
                 self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
+            elif self.previous_item.type == 'operand':
+                return Error(id=10, arg=self.previous_item.value)
         self.converted_list.append(Item(type='operand', value=operand, index=self.item_index))
 
     def validate_operator(self, operator: str):
