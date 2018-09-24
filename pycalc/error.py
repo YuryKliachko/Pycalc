@@ -6,7 +6,8 @@ errors = {1: lambda operand: 'ERROR: Typo in the operand {}!'.format(operand),
           6: lambda operator: 'ERROR: Operand for {} required!'.format(operator),
           7: lambda operator: 'ERROR: negative number cannot be raised ({}) to a fractional power'.format(operator),
           8: lambda operator: 'ERROR: you cannot divide ({}) by zero!'.format(operator),
-          9: 'ERROR: expression cannot be empty'}
+          9: 'ERROR: expression cannot be empty',
+          10: lambda  operand: 'ERROR: operator for {} required!'.format(operand)}
 
 
 class Error(Exception):

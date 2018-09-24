@@ -116,7 +116,7 @@ class Tokenizer:
             self.__dict__[type] = ''
 
     def tokenize_expression(self, string: str):
-        string = string.replace(' ', '').replace(',', ')(').lower()
+        string = string.replace(',', ')(').lower()
         if string == '':
             return Error(id=9)
         for char in string:
@@ -132,6 +132,8 @@ class Tokenizer:
             elif self.is_closing_bracket(char):
                 self.type_not_to_check = None
                 self.closing_bracket += char
+            elif char == ' ':
+                self.type_not_to_check = None
             else:
                 self.define_operator(char)
             attributes = self.check_which_types_filled(self.type_not_to_check)
