@@ -11,7 +11,6 @@ class Converter:
     def __init__(self):
         self.converted_list = []
         self.operator_manager = OperatorsManager()
-        #self.functions_manager = FunctionsManager()
         self.level_of_enclosing = 0
         self.enclosing_required = False
         self.item_index = -1

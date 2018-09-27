@@ -1,7 +1,6 @@
 from unittest import TestCase
 from pycalc.calculator import Calculator
 
-
 class TestCalculator(TestCase):
 
     def test_unary_1(self):
