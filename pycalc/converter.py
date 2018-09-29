@@ -74,7 +74,7 @@ class Converter:
         if bracket == '(':
             if self.previous_item is not None:
                 if self.previous_item.type == 'operand' or self.previous_item.type == 'closing_bracket':
-                    if self.enclosing_required and self.previous_item.type != 'opening_bracket':
+                    if self.enclosing_required:
                         self.converted_list.append(Bracket(type='closing_bracket', value=')', index=self.item_index))
                         self.enclosing_required = False
                         self.item_index += 1
@@ -92,7 +92,6 @@ class Converter:
                 return Error(id=4, arg='(')
 
     def convert_to_math(self, tokenized_list):
-        converted_list = []
         for item in tokenized_list:
             self.item_index += 1
             if item['type'] == 'operand':
@@ -105,8 +104,6 @@ class Converter:
                 self.validate_bracket(item['value'])
             elif item['type'] == 'coma':
                 self.converted_list.append(Item(type='coma', value=',', index=self.item_index))
-            else:
-                converted_list.append(item)
         if self.level_of_enclosing > 0:
             return Error(id=5, arg=')')
         else:
