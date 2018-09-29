@@ -89,11 +89,54 @@ class TestConverter(TestCase):
         with self.assertRaises(Error):
             converter.validate_operator('~')
 
-    def test_validate_function(self):
-        self.fail()
+    def test_validate_function_is_constant(self):
+        converter = Converter()
+        function = 'e'
+        converter.validate_function(function)
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.value, 2.718281828459045)
+        self.assertEqual(last_item.type, 'operand')
 
-    def test_validate_bracket(self):
-        self.fail()
+    def test_validate_function_is_function(self):
+        converter = Converter()
+        function = 'cos'
+        converter.validate_function(function)
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.type, 'function')
+
+    def test_validate_function_not_valid(self):
+        converter = Converter()
+        function = 'sos'
+        with self.assertRaises(Error):
+            converter.validate_function(function)
+
+    def test_validate_bracket_opening_bracket_the_first(self):
+        converter = Converter()
+        bracket = '('
+        converter.validate_bracket(bracket)
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.type, 'opening_bracket')
+
+    def test_validate_bracket_opening_bracket_add_multiplication_before(self):
+        converter = Converter()
+        converter.converted_list.append(Item(type='operand', value='3', index=0))
+        bracket = '('
+        converter.validate_bracket(bracket)
+        pre_last_item = converter.converted_list[-2]
+        last_item = converter.converted_list[-1]
+        self.assertEqual(pre_last_item.type, 'operator')
+        self.assertEqual(last_item.type, 'opening_bracket')
+
+    def test_validate_bracket_opening_bracket_add_multiplication_before(self):
+        converter = Converter()
+        converter.converted_list.append(Item(type='operand', value='3', index=0))
+        bracket = '('
+        converter.validate_bracket(bracket)
+        pre_last_item = converter.converted_list[-2]
+        last_item = converter.converted_list[-1]
+        self.assertEqual(pre_last_item.type, 'operator')
+        self.assertEqual(last_item.type, 'opening_bracket')
+
 
     def test_convert_to_math(self):
         self.fail()

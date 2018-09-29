@@ -75,9 +75,10 @@ class Calculator:
             else:
                 for i in range(self.operator_stack.length):
                     self.calculate_on_stack()
-                    if self.operator_stack.last_item.type == 'opening_bracket':
-                        self.operator_stack.remove_last_item_from_stack()
-                        break
+                    if item.type == 'closing_bracket':
+                        if self.operator_stack.last_item.type == 'opening_bracket':
+                            self.operator_stack.remove_last_item_from_stack()
+                            break
         if self.operator_stack.is_empty():
             current_result = self.operand_stack.last_item.value
             return current_result
