@@ -10,6 +10,7 @@ class Tokenizer:
         self.opening_bracket = str()
         self.closing_bracket = str()
         self.type_not_to_check = str()
+        self.coma = str()
 
     def is_digit(self, char: str):
         if char.isdigit():
@@ -116,7 +117,7 @@ class Tokenizer:
             self.__dict__[type] = ''
 
     def tokenize_expression(self, string: str):
-        string = string.replace(',', ')(').lower()
+        string = string.lower()
         if string == '':
             return Error(id=9)
         for char in string:
@@ -134,6 +135,9 @@ class Tokenizer:
                 self.closing_bracket += char
             elif char == ' ':
                 self.type_not_to_check = None
+            elif self.is_coma(char):
+                self.type_not_to_check = None
+                self.coma += char
             else:
                 self.define_operator(char)
             attributes = self.check_which_types_filled(self.type_not_to_check)
