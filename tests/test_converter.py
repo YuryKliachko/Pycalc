@@ -117,7 +117,7 @@ class TestConverter(TestCase):
         last_item = converter.converted_list[-1]
         self.assertEqual(last_item.type, 'opening_bracket')
 
-    def test_validate_bracket_opening_bracket_add_multiplication_before(self):
+    def test_validate_bracket_opening_bracket_add_multiplication_after_operand(self):
         converter = Converter()
         converter.converted_list.append(Item(type='operand', value='3', index=0))
         bracket = '('
@@ -127,9 +127,9 @@ class TestConverter(TestCase):
         self.assertEqual(pre_last_item.type, 'operator')
         self.assertEqual(last_item.type, 'opening_bracket')
 
-    def test_validate_bracket_opening_bracket_add_multiplication_before(self):
+    def test_validate_bracket_opening_bracket_add_multiplication_after_bracket(self):
         converter = Converter()
-        converter.converted_list.append(Item(type='operand', value='3', index=0))
+        converter.converted_list.append(Bracket(type='closing_bracket', value=')', index=0))
         bracket = '('
         converter.validate_bracket(bracket)
         pre_last_item = converter.converted_list[-2]
@@ -137,6 +137,34 @@ class TestConverter(TestCase):
         self.assertEqual(pre_last_item.type, 'operator')
         self.assertEqual(last_item.type, 'opening_bracket')
 
+    def test_validate_bracket_closing_bracket_balanced(self):
+        converter = Converter()
+        converter.level_of_enclosing = 1
+        converter.validate_bracket(')')
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.type, 'closing_bracket')
 
-    def test_convert_to_math(self):
-        self.fail()
+    def test_validate_bracket_closing_bracket_unbalanced(self):
+        converter = Converter()
+        with self.assertRaises(Error):
+            converter.validate_bracket(')')
+
+    def test_convert_to_math_coma(self):
+        converter = Converter()
+        tokenized_list = [{'type': 'coma', 'value': ','}]
+        converter.convert_to_math(tokenized_list)
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.type, 'coma')
+
+    def test_convert_to_math_closing_bracket_required(self):
+        converter = Converter()
+        tokenized_list = [{'type': 'opening_bracket', 'value': '('}]
+        with self.assertRaises(Error):
+            converter.convert_to_math(tokenized_list)
+
+    def test_convert_to_math_add_closing_bracket(self):
+        converter = Converter()
+        tokenized_list = [{'type': 'operator', 'value': '-'}, {'type': 'operand', 'value': '2.5'}]
+        converter.convert_to_math(tokenized_list)
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.type, 'closing_bracket')

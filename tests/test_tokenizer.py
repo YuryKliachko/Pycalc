@@ -54,8 +54,7 @@ class TestTokenizer(TestCase):
         self.assertEqual([{'type': 'function', 'value': 'log10'},
                           {'type': 'opening_bracket', 'value': '('},
                           {'type': 'operand', 'value': '30'},
-                          {'type': 'closing_bracket', 'value': ')'},
-                          {'type': 'opening_bracket', 'value': '('},
+                          {'type': 'coma', 'value': ','},
                           {'type': 'operand', 'value': '45'},
                           {'type': 'closing_bracket', 'value': ')'}], result)
 
