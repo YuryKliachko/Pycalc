@@ -50,8 +50,7 @@ class Converter:
                     self.converted_list.append(Bracket(type='opening_bracket', value='(', index=self.item_index))
                     self.enclosing_required = True
                     self.item_index += 1
-            else:
-                if operator == '-':
+            elif operator == '-':
                     self.converted_list.append(Bracket(type='opening_bracket', value='(', index=self.item_index))
                     self.enclosing_required = True
                     self.item_index += 1

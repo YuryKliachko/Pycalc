@@ -1,4 +1,5 @@
 from unittest import TestCase
+from pycalc.operator_class import Operator
 from pycalc.converter import Converter
 from pycalc.error import Error
 from pycalc.bracket import Bracket
@@ -55,8 +56,38 @@ class TestConverter(TestCase):
         with self.assertRaises(Error):
             converter.validate_operand(operand)
 
-    def test_validate_operator(self):
-        self.fail()
+    def test_validate_operator_add_closing_bracket_before(self):
+        converter = Converter()
+        converter.converted_list.append(Item(type='operand', value='1', index=0))
+        converter.enclosing_required = True
+        converter.validate_operator('//')
+        pre_last_item = converter.converted_list[-2]
+        self.assertEqual(pre_last_item.type, 'closing_bracket')
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.value, '//')
+
+    def test_validate_operator_add_opening_bracket_before(self):
+        converter = Converter()
+        converter.converted_list.append(Operator(value='/', index=2, function=None, priority=3))
+        converter.validate_operator('-')
+        pre_last_item = converter.converted_list[-2]
+        self.assertEqual(pre_last_item.type, 'opening_bracket')
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.value, '-')
+
+    def test_validate_operator_minus_the_first(self):
+        converter = Converter()
+        converter.validate_operator('-')
+        pre_last_item = converter.converted_list[-2]
+        self.assertEqual(pre_last_item.type, 'opening_bracket')
+        last_item = converter.converted_list[-1]
+        self.assertEqual(last_item.value, '-')
+        self.assertEqual(converter.enclosing_required, True)
+
+    def test_validate_operator_not_valid(self):
+        converter = Converter()
+        with self.assertRaises(Error):
+            converter.validate_operator('~')
 
     def test_validate_function(self):
         self.fail()
