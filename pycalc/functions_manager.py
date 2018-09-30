@@ -11,6 +11,7 @@ class FunctionsManager:
             return True
         else:
             return False
+
     @staticmethod
     def fetch_function_value(function):
         value = FunctionsManager.functions_dict[function]

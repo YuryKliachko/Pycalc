@@ -26,7 +26,7 @@ class Calculator:
         operator_on_stack = self.operator_stack.last_item
         if operator_on_stack.type == 'function':
             operators_function = operator_on_stack.function
-            arguments = self.operand_stack.remove_args_from_stack(operator_on_stack.index)
+            arguments = self.operand_stack.remove_arguments_from_stack(operator_on_stack.index)
             current_result = operators_function(*arguments)
         elif operator_on_stack.type == 'operator':
             operators_function = operator_on_stack.function
