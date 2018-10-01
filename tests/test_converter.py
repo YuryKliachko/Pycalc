@@ -5,6 +5,7 @@ from pycalc.error import Error
 from pycalc.bracket import Bracket
 from pycalc.item import Item
 
+
 class TestConverter(TestCase):
     def test_previous_item_positive(self):
         converter = Converter()

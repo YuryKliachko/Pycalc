@@ -16,12 +16,6 @@ class Calculator:
         self.operator_stack = OperatorStack()
         self.current_operator = None
 
-    def is_returned_as_error(self, item):
-        if isinstance(item, Error):
-            return True
-        else:
-            return False
-
     def calculate_on_stack(self):
         operator_on_stack = self.operator_stack.last_item
         if operator_on_stack.type == 'function':
