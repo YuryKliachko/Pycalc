@@ -117,6 +117,8 @@ class Converter:
     def convert_to_math(self, tokenized_list):
         """Receives a tokenizer list from a tokenizer and calls an appropriate validating method for each item
         in the list. Raises an exception if a closing bracket missed in the very end of an expression."""
+        if len(tokenized_list) == 0:
+            return Error(id=9)
         for item in tokenized_list:
             self.item_index += 1
             if item['type'] == 'operand':
