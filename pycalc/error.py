@@ -1,3 +1,4 @@
+"""Errors dictionary with error ID as an key and lambda function returning an error message"""
 errors = {1: lambda operand: 'ERROR: Typo in the operand {}!'.format(operand),
           2: lambda operator: 'ERROR: Unsupported operator {}!'.format(operator),
           3: lambda function: 'ERROR: Unsupported function {}!'.format(function),
@@ -7,11 +8,13 @@ errors = {1: lambda operand: 'ERROR: Typo in the operand {}!'.format(operand),
           7: lambda operator: 'ERROR: negative number cannot be raised ({}) to a fractional power'.format(operator),
           8: lambda operator: 'ERROR: you cannot divide ({}) by zero!'.format(operator),
           9: 'ERROR: expression cannot be empty',
-          10: lambda  operand: 'ERROR: operator for {} required!'.format(operand)}
+          10: lambda operand: 'ERROR: operator for {} required!'.format(operand)}
 
 
 class Error(Exception):
     def __init__(self, id, arg=None):
+        """Generates an instance of Error class, requires in id of an error and argument, which will be passed to
+        a error message (set as None by default). Raises it self as soon as instance created."""
         self.arg = arg
         self.id = id
         if self.arg is not  None:
