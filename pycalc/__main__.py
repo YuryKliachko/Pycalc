@@ -3,8 +3,8 @@ from pycalc.calculator import Calculator
 from pycalc.error import Error
 from pycalc.functions_manager import FunctionsManager
 
-parser = ArgumentParser()
-parser.add_argument('-m', '--use-modules', help='additional modules to use')
+parser = ArgumentParser(description='Pure-python command-line calculator.', prog='pycalc')
+parser.add_argument('-m', '--use-modules', help='additional modules to use', metavar='MODULE [MODULE ...]')
 parser.add_argument('EXPRESSION', help='expression string to evaluate')
 args = parser.parse_args()
 
