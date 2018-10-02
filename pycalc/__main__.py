@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, PARSER
+from argparse import ArgumentParser
 from pycalc.calculator import Calculator
 from pycalc.error import Error
 from pycalc.functions_manager import FunctionsManager
@@ -10,6 +10,9 @@ args = parser.parse_args()
 
 
 def main():
+    """This function gather positional arguments entered invokes calculation. Wrapped in try block to catch error
+    messages while preparing expression and calculating itself
+    """
     if args.use_modules:
         for module in args.use_modules.split(' '):
             user_module = __import__(module)
