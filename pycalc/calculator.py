@@ -97,3 +97,4 @@ class Calculator:
             if self.operator_stack.length == 0:
                 return current_result
         return self.operand_stack.last_item.value
+
