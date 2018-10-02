@@ -24,7 +24,7 @@ class Converter:
             return None
     
     def validate_operand(self, operand: str):
-        """Converts a string reprewsentation of an operand to a integer or float value and adds an Item object
+        """Converts a string representation of an operand to a integer or float value and adds an Item object
         to the converted list. If string contains more than one dot, this method raises an exception"""
         if '.' in operand and operand.count('.') == 1:
             operand = float(operand)
@@ -37,14 +37,17 @@ class Converter:
                 operator = '*'                               # multiplication (x + y)z
                 priority = self.operator_manager.fetch_operators_priority(operator)
                 operator_function = self.operator_manager.fetch_operators_function(operator)
-                self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
+                self.converted_list.append(Operator(value=operator,
+                                                    index=self.item_index,
+                                                    function=operator_function,
+                                                    priority=priority))
             elif self.previous_item.type == 'operand':  # Raises an error if there is no operator between 2 operands
                 return Error(id=10, arg=self.previous_item.value)
         self.converted_list.append(Item(type='operand', value=operand, index=self.item_index))
 
     def validate_operator(self, operator: str):
         """Checks if an operator supported through operators manager and adds Operator object into the converted list if
-         validation successfull, or raises an exception if it faces an unsupported operator.
+         validation successful, or raises an exception if it faces an unsupported operator.
          Also this methods encloses a minus and operand after it with brackets."""
         if self.operator_manager.is_valid_operator(operator):
             if self.previous_item is not None:
@@ -62,7 +65,10 @@ class Converter:
                 self.item_index += 1
             priority = self.operator_manager.fetch_operators_priority(operator)
             operator_function = self.operator_manager.fetch_operators_function(operator)
-            self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
+            self.converted_list.append(Operator(value=operator,
+                                                index=self.item_index,
+                                                function=operator_function,
+                                                priority=priority))
         else:
             return Error(id=2, arg=operator)
 
@@ -82,7 +88,7 @@ class Converter:
     def validate_bracket(self, bracket):
         """Tracks if brackets in an expression are balanced and raises an exception in case either opening or
         closing bracket required.
-        It adds a closing bracket before an opening bracket to accomodate enclosing a minus mentioned in
+        It adds a closing bracket before an opening bracket to accommodate enclosing a minus mentioned in
         description to validate_operator method. In order to handle 'invisible' multiplication, method appends
         an * operator the a converted list ('x(y+z)')"""
         if bracket == '(':
@@ -95,7 +101,10 @@ class Converter:
                     operator = '*'
                     priority = self.operator_manager.fetch_operators_priority(operator)
                     operator_function = self.operator_manager.fetch_operators_function(operator)
-                    self.converted_list.append(Operator(value=operator, index=self.item_index, function=operator_function, priority=priority))
+                    self.converted_list.append(Operator(value=operator,
+                                                        index=self.item_index,
+                                                        function=operator_function,
+                                                        priority=priority))
             self.converted_list.append(Bracket(type='opening_bracket', value=bracket, index=self.item_index))
             self.level_of_enclosing += 1
         elif bracket == ')':
@@ -106,7 +115,7 @@ class Converter:
                 return Error(id=4, arg='(')
 
     def convert_to_math(self, tokenized_list):
-        """Receives a tokenizet list from a tokenizer and calls an appropriate validating method for each item
+        """Receives a tokenizer list from a tokenizer and calls an appropriate validating method for each item
         in the list. Raises an exception if a closing bracket missed in the very end of an expression."""
         for item in tokenized_list:
             self.item_index += 1
