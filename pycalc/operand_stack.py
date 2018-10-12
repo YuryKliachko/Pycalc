@@ -2,10 +2,6 @@ from pycalc.stack import Stack
 
 
 class OperandStack(Stack):
-    def __init__(self):
-        """Fully inherits __init__ method from the Stack class with no changes"""
-        Stack.__init__(self)
-
     def put_on_stack(self, item, stack_to_refresh):
         """
         Method overrides the same method in the superclass with additional checking if an operators stack contains
@@ -17,7 +13,7 @@ class OperandStack(Stack):
             stack_to_refresh.changed_last = False
             self.changed_last = True
         else:
-            Stack.put_on_stack(self, item, stack_to_refresh)
+            super().put_on_stack(item, stack_to_refresh)
 
     def remove_pre_last_item_from_stack(self):
         """

@@ -9,27 +9,27 @@ class FunctionsManager:
     functions_dict = {'pow': pow, 'abs': abs, 'round': round}  # The main dictionary with func name as a key and
     functions_dict.update(math.__dict__) # function itself as a value. All dicts from user modules will be merged in it.
 
-    @staticmethod
-    def is_valid_function(function):
+    @classmethod
+    def is_valid_function(cls, function):
         """
         Checks if a function is valid. If yes, it returns True, otherwise False will be returned
         """
-        if function in FunctionsManager.functions_dict.keys():
+        if function in cls.functions_dict.keys():
             return True
         else:
             return False
 
-    @staticmethod
-    def fetch_function_value(function):
+    @classmethod
+    def fetch_function_value(cls, function):
         """
         Retrieves and returns a function itself from the functions dictionary.
         """
-        value = FunctionsManager.functions_dict[function]
+        value = cls.functions_dict[function]
         return value
 
-    @staticmethod
-    def add_new_dict(dictionary: dict):
+    @classmethod
+    def add_new_dict(cls, dictionary: dict):
         """
         Merges a dictionary from a user's module in the main functions dictionary.
         """
-        FunctionsManager.functions_dict.update(dictionary)
+        cls.functions_dict.update(dictionary)

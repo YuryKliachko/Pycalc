@@ -39,8 +39,13 @@ class Calculator:
                     return Error(id=6, arg=operator_on_stack.value)
             current_result = operators_function(first_operand.value, second_operand.value)
         else:
-            current_result = self.operand_stack.last_item.value
-            return current_result
+            if not self.operand_stack.is_empty():
+                current_result = self.operand_stack.last_item.value
+                return current_result
+            else:
+                current_result = None
+                self.operand_stack.put_on_stack(Item(type='operand', value=current_result, index=1), self.operator_stack)
+                return current_result
         self.operator_stack.remove_last_item_from_stack()
         self.operand_stack.put_on_stack(Item(type='operand', value=current_result, index=self.current_operator.index), self.operator_stack)
         if self.operator_stack.is_empty() is False:
@@ -98,3 +103,6 @@ class Calculator:
                 return current_result
         return self.operand_stack.last_item.value
 
+cal = Calculator('()')
+cal.prepare_expression()
+print(cal.calculate_result())
