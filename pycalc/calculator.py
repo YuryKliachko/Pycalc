@@ -43,9 +43,7 @@ class Calculator:
                 current_result = self.operand_stack.last_item.value
                 return current_result
             else:
-                current_result = None
-                self.operand_stack.put_on_stack(Item(type='operand', value=current_result, index=1), self.operator_stack)
-                return current_result
+                return
         self.operator_stack.remove_last_item_from_stack()
         self.operand_stack.put_on_stack(Item(type='operand', value=current_result, index=self.current_operator.index), self.operator_stack)
         if self.operator_stack.is_empty() is False:
@@ -93,8 +91,8 @@ class Calculator:
                             self.operator_stack.remove_last_item_from_stack()
                             break
         if self.operator_stack.is_empty():
-            current_result = self.operand_stack.last_item.value
-            return current_result
+            current_result = self.operand_stack.last_item
+            return current_result.value if current_result is not None else None
         elif self.operator_stack.length == 1:
             self.calculate_on_stack()
         for i in range(self.operator_stack.length):
@@ -102,7 +100,3 @@ class Calculator:
             if self.operator_stack.length == 0:
                 return current_result
         return self.operand_stack.last_item.value
-
-cal = Calculator('()')
-cal.prepare_expression()
-print(cal.calculate_result())

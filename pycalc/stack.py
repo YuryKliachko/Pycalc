@@ -34,7 +34,7 @@ class Stack:
     @property
     def last_item(self):
         """Returns a last item from stack"""
-        return self.container[self.length-1]
+        return self.container[self.length-1] if self.length != 0 else None
 
     def remove_last_item_from_stack(self):
         """Remove and returns a last item from stack"""
