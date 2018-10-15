@@ -28,7 +28,7 @@ class Tokenizer:
 
     def is_alpha(self, char: str):
         """Checks if char is alphabetic"""
-        if char.isalpha():
+        if char.isalpha() or char == '_':
             return True
         else:
             return False
@@ -135,7 +135,6 @@ class Tokenizer:
         In the end, it uses check_which_items_filled method to get list of items to be added to the resulting list, adds
         them and returns resulting list.
         In case a string is empty, method raises an exception."""
-        string = string.lower()
         if string == '':
             return Error(id=9)
         for char in string:

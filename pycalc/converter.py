@@ -121,14 +121,15 @@ class Converter:
             return Error(id=9)
         for item in tokenized_list:
             self.item_index += 1
-            if item['type'] == 'operand':
-                self.validate_operand(item['value'])
-            elif item['type'] is 'operator':
-                self.validate_operator(item['value'])
-            elif item['type'] == 'function':
-                self.validate_function(item['value'])
-            elif item['type'] == 'opening_bracket' or item['type'] == 'closing_bracket':
-                self.validate_bracket(item['value'])
+            validators_mapping = {
+                "operand": self.validate_operand,
+                "operator": self.validate_operator,
+                "function": self.validate_function,
+                "opening_bracket": self.validate_bracket,
+                "closing_bracket": self.validate_bracket
+            }
+            if item['type'] in validators_mapping:
+                validators_mapping[item['type']](item['value'])
             elif item['type'] == 'coma':
                 self.converted_list.append(Item(type='coma', value=',', index=self.item_index))
         if self.level_of_enclosing > 0:
